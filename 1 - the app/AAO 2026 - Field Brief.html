@@ -1254,9 +1254,17 @@ body.packing #packout{display:block}
   .pk-b p{margin:0 0 7pt; font-size:10.2pt; line-height:1.5}
   .pk-blab{display:block; font-family:"Archivo",sans-serif; font-size:7pt; font-weight:600;
     letter-spacing:.13em; text-transform:uppercase; color:#C41E23; margin-bottom:2pt}
-  .pk-backs{margin:-2pt 0 6pt; display:flex; flex-wrap:wrap; gap:3pt 10pt}
-  .pk-back{font-family:"Archivo",sans-serif; font-size:8.5pt; font-weight:600; color:#C41E23;
-    text-decoration:none}
+  .pk-backs{margin:1pt 0 9pt; display:flex; flex-wrap:wrap; gap:4pt 6pt}
+  .pk-back{display:inline-flex; align-items:center; gap:5pt; text-decoration:none;
+    padding:3pt 9pt 3pt 7pt; border:1px solid #C9D4DF; border-radius:20pt; background:#F3F6F9;
+    font-family:"Archivo",sans-serif; font-size:8.5pt; line-height:1.2; color:#0A2337;
+    break-inside:avoid; page-break-inside:avoid}
+  .pk-back::before{content:""; width:4pt; height:4pt; flex:none; margin-right:1pt;
+    border-left:1.4pt solid #C41E23; border-bottom:1.4pt solid #C41E23; transform:rotate(45deg)}
+  .pk-sess.full .pk-back{margin-top:6pt}
+  .pk-back-l{font-weight:700}
+  .pk-back-w{font-weight:500; color:#54687C}
+  .pk-back-w::before{content:"\00b7"; margin-right:5pt; color:#A3B2C0}
   .pk-start{background:#0A2337; color:#fff; border-radius:6pt; padding:9pt 10pt;
     font-size:10.2pt; line-height:1.5; margin-top:2pt;
     break-inside:avoid; page-break-inside:avoid}
@@ -7394,6 +7402,11 @@ function packDivider(n, kicker, title, blurb){
 /* Day pages print only for days with meetings, so a link back to a day falls
    back to the contents when that day has no page. Set by packHTML. */
 let PK_DAYPAGES = {};
+/* the way back, as a button: what it does in bold, where it goes in grey */
+function packBackBtn(href, label, where){
+  return '<a class="pk-back" href="' + href + '"><span class="pk-back-l">' + esc(label) + '</span>' +
+    (has(where) ? '<span class="pk-back-w">' + esc(where) + '</span>' : "") + '</a>';
+}
 function packSessId(dayKey, s2){ return "s-" + dayKey + "-" + slug(String(s2.id || s2.title || "")); }
 function packSessHasMore(s2){
   return !!((s2.chairs || []).length || (s2.panel || []).length || (s2.people || []).length ||
@@ -7431,8 +7444,8 @@ function packSession(dayKey, s2){
         }).join("") + '</div>' : "") +
       (has(s2.note) ? '<p class="pk-sessn">' + esc(s2.note) + '</p>' : "") +
       (PK_DAYPAGES[dayKey]
-        ? '<a class="pk-back" href="#d-' + dayKey + '">‹ Back to ' + esc(day.long || day.label || "the day") + '</a>'
-        : '<a class="pk-back" href="#pk-contents">‹ Back to contents</a>') +
+        ? packBackBtn("#d-" + dayKey, "Back to the day", day.long || day.label)
+        : packBackBtn("#pk-contents", "Back to contents", "")) +
     '</div>' +
   '</div>';
 }
@@ -7680,12 +7693,12 @@ function packHTML(){
       const k = slug(nm), ms = mtgBy[k] || [];
       if(ms.length) return ms.map(function(m){
         const d = DAYS.filter(function(x){ return x.key === m.day; })[0] || {};
-        return '<a class="pk-back" href="#m-' + esc(String(m.id)) + '">\u2039 Back to the meeting \u00b7 ' +
-          esc([d.label, t12(m.time || "")].filter(has).join(", ")) + '</a>';
+        return packBackBtn("#m-" + String(m.id), "Back to the meeting",
+          [d.label, t12(m.time || "")].filter(has).join(" \u00b7 "));
       }).join("");
       const sd = stageDay(k);
-      if(sd && PK_DAYPAGES[sd.key]) return '<a class="pk-back" href="#d-' + sd.key + '">\u2039 Back to ' + esc(sd.long || sd.label) + '</a>';
-      return '<a class="pk-back" href="#pk-contents">\u2039 Back to contents</a>';
+      if(sd && PK_DAYPAGES[sd.key]) return packBackBtn("#d-" + sd.key, "Back to the programme", sd.long || sd.label);
+      return packBackBtn("#pk-contents", "Back to contents", "");
     };
     briefNames.forEach(function(nm){
       const b = BRIEFS[nm] || {};
