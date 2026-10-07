@@ -260,13 +260,6 @@ input,select,textarea{font-family:inherit; font-size:inherit; color:inherit}
 }
 @media print{ .mapbtn,.cart{display:none} .headnote{animation:none} }
 /* the floor reuses the Targets card wholesale; only the page furniture is new */
-.impwed{display:flex; gap:4px; flex-wrap:wrap; margin-bottom:3px}
-.wedrow{display:flex; align-items:center; gap:6px; flex-wrap:wrap;
-  margin-top:10px; padding-top:9px; border-top:1px solid var(--line)}
-.wedlab{font-family:Archivo, system-ui, sans-serif; font-size:10.5px; font-weight:600;
-  text-transform:uppercase; letter-spacing:.07em; color:var(--ink-3)}
-.sbtn.wed[aria-pressed="true"]{background:var(--teal-fill); color:var(--teal); border-color:var(--teal-line); font-weight:600}
-.wedhint{font-size:11.5px; color:var(--ink-2)}
 .kset{display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:9px}
 .kset .kindsel{flex:none}
 .impdrop{display:flex; align-items:center; gap:11px; flex-wrap:wrap;
@@ -328,10 +321,10 @@ input,select,textarea{font-family:inherit; font-size:inherit; color:inherit}
   font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3);
   border:1px solid var(--line); border-radius:5px; padding:3px 8px; background:var(--surface)}
 .eventtag .sq{width:8px;height:8px;border-radius:2px;background:var(--gold);flex:none}
-.eventtag.euretina .sq{background:var(--navy)}
-.eventtag.eis .sq{background:var(--ora-teal)}
-:root[data-theme="dark"] .eventtag.euretina .sq,
-:root:not([data-theme="light"]) .eventtag.euretina .sq{background:var(--ink-2)}
+.eventtag.aao .sq{background:var(--navy)}
+.eventtag.eyec .sq{background:var(--ora-teal)}
+:root[data-theme="dark"] .eventtag.aao .sq,
+:root:not([data-theme="light"]) .eventtag.aao .sq{background:var(--ink-2)}
 
 /* executive */
 .hero{display:grid; grid-template-columns:repeat(auto-fit,minmax(172px,1fr)); gap:10px; margin-bottom:10px}
@@ -1401,14 +1394,11 @@ var o=[];var l=Array.isArray(e);for(f=n.s.c;f<=n.e.c;++f)s[f]=ya(f);for(var c=n.
 </script>
 <script>
 /* =========================================================================
-   PROGRAMME — Wednesday 30 September 2026, Vienna. Two events run head to head.
+   PROGRAMME — Eyecelerator @ AAO 2026, Thursday 8 October, New Orleans.
 
-   FORUM : Ophthalmology Futures Retina Forum, Imperial Riding School, 08:00-20:30
-   EIS   : EURETINA Innovation Spotlight, VIECON Room 1/Hall A, 12:00-19:00
-
-   Both transcribed from the published programmes. The Retina Forum publishes
-   session titles for Company Presentations 1-4 but no company list, so those
-   four slots are carried empty rather than guessed at.
+   Transcribed from the published programme, 07:00 registration through the
+   17:30 reception, with the four presenting-company showcase rooms that run
+   in parallel kept as four sessions rather than one row.
    ========================================================================= */
 const EYEC = [
   {id:"reg", t:"07:00", e:"08:00", kind:"open",
@@ -1602,7 +1592,7 @@ const PLACES = {
     name: "", addr: "", note: "",
     q: ""
   }, */
-  viecon: {
+  morial: {
     name: "Ernest N. Morial Convention Center",
     addr: "900 Convention Center Blvd, New Orleans, LA 70130",
     note: "The hall runs most of a mile end to end \u2014 budget ten minutes between anything at opposite ends of it, and more on the first morning.",
@@ -1747,19 +1737,19 @@ const DAYS = [
    date:"8 Oct 2026",
    sub:"Day before AAO \u00b7 confirm the date",
    venue:"Venue to confirm, New Orleans",
-   event:"Eyecelerator @ AAO 2026", ec:"eis", place:""},
+   event:"Eyecelerator @ AAO 2026", ec:"eyec", place:""},
   {key:"fri9", short:"Fri", label:"Fri 9", long:"Friday 9 October", date:"9 Oct 2026",
    sub:"Subspecialty Day", venue:"Ernest N. Morial Convention Center, New Orleans",
-   event:"AAO 2026", ec:"euretina", place:"viecon"},
+   event:"AAO 2026", ec:"aao", place:"morial"},
   {key:"sat10", short:"Sat", label:"Sat 10", long:"Saturday 10 October", date:"10 Oct 2026",
    sub:"AAO Day 1", venue:"Ernest N. Morial Convention Center, New Orleans",
-   event:"AAO 2026", ec:"euretina", place:"viecon"},
+   event:"AAO 2026", ec:"aao", place:"morial"},
   {key:"sun11", short:"Sun", label:"Sun 11", long:"Sunday 11 October", date:"11 Oct 2026",
    sub:"AAO Day 2", venue:"Ernest N. Morial Convention Center, New Orleans",
-   event:"AAO 2026", ec:"euretina", place:"viecon"},
+   event:"AAO 2026", ec:"aao", place:"morial"},
   {key:"mon12", short:"Mon", label:"Mon 12", long:"Monday 12 October", date:"12 Oct 2026",
    sub:"AAO Day 3", venue:"Ernest N. Morial Convention Center, New Orleans",
-   event:"AAO 2026", ec:"euretina", place:"viecon"}
+   event:"AAO 2026", ec:"aao", place:"morial"}
 ];
 const eventTag = d => '<span class="eventtag ' + d.ec + '"><span class="sq"></span>' + esc(d.event) + '</span>';
 /* one tag per distinct event, however many strands the week has */
@@ -1796,7 +1786,7 @@ Object.keys(PROGRAMMES).forEach(function(dayKey){
 });
 
 /* ---------- the exhibition floor ----------
-   Transcribed from the EURETINA congress exhibitor directory, Sept 2026.
+   Transcribed from the AAO 2026 exhibitor directory.
    Names are kept exactly as the organiser lists them so a re-import can be
    diffed against this; where our own brief calls a company something else,
    EX_ALIAS carries the mapping rather than the name being edited here. */
@@ -1862,14 +1852,14 @@ function boothOf(name){
   return {booth: rec.b, name: rec.n, note: EX_NOTE[id] || "", alias: target !== id};
 }
 
-/* who is on stage more than once, across both programmes */
+/* who is on stage more than once across the Eyecelerator programme */
 const stageIndex = {};
 const addStage = (name, label, time) => {
   if(!name) return;
   (stageIndex[name] = stageIndex[name] || []).push({label, time});
 };
 Object.keys(PROGRAMMES).forEach(function(dayKey){
-  const tag = dayKey === "eis" ? "EIS" : "Forum";
+  const tag = "Eyecelerator";
   PROGRAMMES[dayKey].sessions.forEach(function(s){
     if(s.kind === "panel"){
       const label = tag + " panel " + s.n;
@@ -1945,7 +1935,7 @@ const COUNTRIES = ["UK","Ireland","Germany","France","Italy","Spain","Netherland
   "Austria","Denmark","Sweden","Norway","Finland","Poland","Portugal","Czechia","Hungary","Greece",
   "T\u00fcrkiye","Israel","USA","Canada","Australia","India","Japan","Singapore","Other"];
 
-/* names on the Forum programme, normalised so "Dr. Stefanie Schmickler" finds "Stephanie Schmickler" */
+/* names on the Eyecelerator programme, normalised so "Dr. Stefanie Schmickler" finds "Stephanie Schmickler" */
 const normName = function(n){
   return String(n||"").toLowerCase().replace(/^(dr|prof|professor|mr|mrs|ms)\.?\s+/,"").replace(/[^a-z\s-]/g,"").trim();
 };
@@ -1979,7 +1969,9 @@ let state = { targets:{}, meetings:{}, proposed:{}, outcomes:{}, debriefs:{}, mi
 /* On the team copy there is no shared database, so a colleague's debrief has
    nowhere to go but their own browser. That is enough: they capture it in the
    ten minutes after the meeting and send Berto the block at the end of the day. */
-const MINE_KEY = "euretina2026.debriefs.v1";
+/* named for this congress alone: pages opened from disk can share one storage
+   area, so a key borrowed from another congress would read that congress's debriefs */
+const MINE_KEY = "aao2026.debriefs.v1";
 function loadMine(){
   try{ return JSON.parse(localStorage.getItem(MINE_KEY) || "{}") || {}; }catch(e){ return {}; }
 }
@@ -2001,7 +1993,7 @@ function originOf(m){
   if(m && m.floor) return accountOrigin(m.accountId);
   const set = (state.outcomes[m.id] || {}).origin;
   if(set === "prebooked" || set === "hunted") return set;
-  return /EURETINA Meetings\.csv/i.test(m.source || "") ? "prebooked" : "";
+  return /AAO invites/i.test(m.source || "") ? "prebooked" : "";
 }
 function wasHeld(m){
   if(m && m.floor) return accountHeld(m.accountId);
@@ -2189,7 +2181,7 @@ const STORE_KEY = "aao2026-brief";
 /* Stamped at build time. Shown in the status line so that "is the copy I was
    just sent newer than the one I am typing into" is a question you can answer
    by looking, instead of by opening both. */
-const BUILD = "06 Oct 2026";
+const BUILD = "07 Oct 2026";
 
 let DIRTY = false;          /* changed since the last backup was saved */
 let STORE_FULL = false;     /* the browser refused a write */
@@ -2745,9 +2737,6 @@ async function saveTarget(id, patch){
       ? nm + " flagged " + ((STATUS[patch.status] || {}).label || patch.status)
       : nm + " flag cleared");
   }
-  if(patch && patch.wed !== undefined && patch.wed !== cur.wed){
-    logChange(nm + " marked " + (patch.wed ? wedLabel(patch.wed) : "not marked") + " for Wednesday");
-  }
   state.targets[id] = next; render();
   if(db){ try{ await db.doc("targets/" + id).set(next); }catch(e){ notice("Target flags are owner-only while the schedule is locked."); } }
 }
@@ -2962,7 +2951,7 @@ function sfComposeBody(m, d){
   if(d.outcome === "noshow"){
     rows.push("Outcome: No-show \u2014 the meeting was booked and they did not attend.");
     if(has(d.notes)) rows.push("Notes: " + String(d.notes).trim());
-    rows.push("Meeting: " + when + (has(m.location) ? " \u00b7 " + String(m.location).trim() : "") + " \u00b7 EURETINA 2026, Vienna");
+    rows.push("Meeting: " + when + (has(m.location) ? " \u00b7 " + String(m.location).trim() : "") + " \u00b7 AAO 2026, New Orleans");
     return rows.join("\n");
   }
   if(has(sfComposeContact(m, d))) rows.push("Met: " + sfComposeContact(m, d));
@@ -2972,7 +2961,7 @@ function sfComposeBody(m, d){
     (nextBits.length ? ". Next: " + nextBits.join(", ") : ". No next step recorded") + ".");
   if(o.on) rows.push("Opportunity: " + (o.kind === "new" ? "surfaced at this meeting" : "already open") +
     ([o.study, o.phase, o.size].filter(has).length ? " \u2014 " + [o.study, o.phase, o.size].filter(has).join(", ") : ""));
-  rows.push("Meeting: " + when + (has(m.location) ? " \u00b7 " + String(m.location).trim() : "") + " \u00b7 EURETINA 2026, Vienna");
+  rows.push("Meeting: " + when + (has(m.location) ? " \u00b7 " + String(m.location).trim() : "") + " \u00b7 AAO 2026, New Orleans");
   return rows.join("\n");
 }
 /* stored text wins once a human has touched it */
@@ -3118,7 +3107,7 @@ function meetingOra(m){
   if(Array.isArray(m.oraIds) && m.oraIds.length) return m.oraIds.map(personName).filter(Boolean);
   return String(m.ours||"").split(",").map(function(s){ return s.trim(); }).filter(Boolean);
 }
-/* people assigned to a meeting on a day they are not down as being in Vienna */
+/* people assigned to a meeting on a day they are not down as being at the congress */
 function absentees(m){
   if(!Array.isArray(m.oraIds)) return [];
   return m.oraIds.map(person).filter(function(p){
@@ -3573,8 +3562,8 @@ function icsParams(line){
   });
   return out;
 }
-/* A stamp is either floating local time, or UTC with a Z. Vienna is what the
-   week is in, so a UTC stamp is converted there rather than to whatever zone
+/* A stamp is either floating local time, or UTC with a Z. New Orleans is what
+   the week is in, so a UTC stamp is converted there rather than to whatever zone
    the laptop happens to be set to. */
 function icsWhen(line){
   const v = icsValue(line).trim();
@@ -3641,7 +3630,6 @@ function icsToRows(text){
     const guess = icsCompanyFrom(ev.people, ev.organiser);
     const hit = matchCompany(guess || ev.summary || "");
     const name = guess ? hit.name : (ev.summary || "Untitled invite");
-    const isWed = /^9\/30\//.test(ev.date);
     const day = sfDay(ev.date, ev.summary, name);
     const theirs = ev.people.filter(function(pp){
       const dom = String(pp.email || "").split("@")[1] || "";
@@ -3654,7 +3642,6 @@ function icsToRows(text){
     return {key: "ics" + i, raw: guess || ev.summary, company: name,
             how: guess ? ("from the invite \u00b7 " + hit.how) : "from the invite \u00b7 name unclear",
             date: ev.date, time: ev.time, day: day,
-            isWed: isWed, wed: isWed ? (day || "") : "",
             people: theirs.map(function(pp){ return {name: pp.name, title: ""}; }),
             ora: "", subject: ev.summary, account: "", loc: ev.loc,
             /* an unchanged row is already right and does not need importing;
@@ -3674,13 +3661,13 @@ function sfParse(text){
   const cSub = col("subject"), cCo = col("company / account"), cAcc = col("account id"),
         cDate = col("date"), cOra = col("ora attendees"), cName = col("name"), cTitle = col("title");
   if(cCo < 0 || cDate < 0) return [];
-  /* The time column is named for the city, or just "time"; the AM/PM that
-     follows it sits under a blank header. Salesforce has shipped this column
-     as "Vienna", "Vienna Time" and "Time" on different days, and an exact
-     list missed "Vienna Time" — every row then imported with no time at all
-     and nothing said why. Known spellings first, then any header carrying the
-     word "time" that is not a record-keeping column. */
-  const TIME_NAME = /^(vienna|vienna time|local|local time|time|start|start time|meeting time)$/i;
+  /* The time column is named for the city or the zone, or just "time"; the
+     AM/PM that follows it sits under a blank header. Salesforce has shipped it
+     under different names on different days, and an exact list once missed one
+     — every row then imported with no time at all and nothing said why. Known
+     spellings first, then any header carrying the word "time" that is not a
+     record-keeping column. */
+  const TIME_NAME = /^(new orleans|new orleans time|central|central time|local|local time|time|start|start time|meeting time)$/i;
   const TIME_SKIP = /\b(created|modified|updated|last|system|zone|duration|end)\b/i;
   let cTime = -1;
   for(let i = 0; i < head.length; i++){
@@ -3692,12 +3679,6 @@ function sfParse(text){
     }
   }
   const cHalf = (cTime > -1 && cTime + 1 < head.length && !head[cTime + 1]) ? cTime + 1 : -1;
-  /* an optional column saying which 30 September programme this was, so the
-     answer can travel in the file instead of being clicked in afterwards */
-  let cWed = -1;
-  for(let i = 0; i < head.length; i++){
-    if(/^(wednesday|programme|program|forum\/eis)$/i.test(head[i])){ cWed = i; break; }
-  }
   const group = {}, order = [];
   rows.slice(1).forEach(function(r){
     const co = sfClean(r[cCo]), date = sfClean(r[cDate]);
@@ -3708,7 +3689,6 @@ function sfParse(text){
     const key = slug(co) + "|" + date + "|" + time;
     if(!group[key]){
       group[key] = {company: co, date: date, time: time,
-                    wedCol: cWed > -1 ? sfClean(r[cWed]).toLowerCase() : "",
                     subject: sfClean(r[cSub]),
                     account: cAcc > -1 ? sfClean(r[cAcc]) : "",
                     ora: cOra > -1 ? sfClean(r[cOra]) : "", people: []};
@@ -3725,8 +3705,7 @@ function sfParse(text){
   return order.map(function(k){
     const g = group[k];
     const hit = matchCompany(g.company);
-    let day = sfDay(g.date, g.subject, hit.name);
-    if(WED_KEYS.indexOf(g.wedCol) > -1) day = WED_TAB[g.wedCol] || day;
+    const day = sfDay(g.date, g.subject, hit.name);
     /* Company alone: keying on the time too meant a corrected export never
        recognised the card it was correcting.
        Three spellings have to be reconciled - what the export said, what we
@@ -3746,11 +3725,6 @@ function sfParse(text){
     const moved = !!(dup && ((g.time && dup.time !== g.time) || (day && dup.day !== day)));
     return {key: k, raw: g.company, company: hit.name, how: hit.how, date: g.date,
             time: g.time || "", day: day,
-            /* a 30 September row gets the Forum/EIS toggle rather than one day,
-               because a company can have been at both */
-            isWed: /^9\/30\//.test(String(g.date).trim()),
-            wed: /^9\/30\//.test(String(g.date).trim())
-                   ? (WED_KEYS.indexOf(g.wedCol) > -1 ? g.wedCol : (day || "")) : "",
             people: g.people, ora: g.ora, subject: g.subject, account: g.account,
             /* an unchanged row is already right and does not need importing;
                a moved one is exactly what this import is for */
@@ -3783,26 +3757,12 @@ function importPanel(){
             (slug(r.company) !== slug(r.raw) ? '<span class="impnote">export said "' + esc(r.raw) + '"</span>' : '') +
             '<span class="impnote">' + esc(r.how) + (r.dup ? (r.moved ? ' · in the brief — this corrects its time'                  : ' · already in the brief, unchanged') : '') + '</span></td>' +
           '<td>' +
-            (r.isWed
-              ? '<span class="impwed">' +
-                  WED_PROG.map(function(o){
-                    return '<button class="sbtn wed" data-impwed="' + i + '|' + o.k +
-                      '" aria-pressed="' + (r.wed === o.k) + '">' + o.label + '</button>';
-                  }).join("") +
-                '</span><span class="impnote">' +
-                  (!r.wed
-                    ? "Pick one"
-                    : (r.wed === "forum" || r.wed === "eis"
-                        ? esc(wedLabel(r.wed))
-                        : esc(wedLabel(r.wed)) + ", card sits on " +
-                          esc((DAYS.filter(function(d){ return d.key === r.day; })[0] || {}).label || "?"))) +
-                '</span>'
-              : '<select data-impday="' + i + '">' +
+            '<select data-impday="' + i + '">' +
             '<option value=""' + (r.day ? "" : " selected") + '>— pick a day</option>' +
             DAYS.map(function(d){
               return '<option value="' + d.key + '"' + (r.day === d.key ? " selected" : "") + '>' +
                 esc(d.label) + '</option>';
-            }).join("") + '</select>') +
+            }).join("") + '</select>' +
             '<span class="impnote">' + esc(r.date) +
               (r.time ? ' \u00b7 ' + esc(t12(r.time)) : ' \u00b7 no time given') + '</span></td>' +
           '<td>' + r.people.map(function(p){
@@ -3834,11 +3794,9 @@ function importPanel(){
 async function runImport(){
   const st = sfImportRows();
   const take = (st.rows || []).filter(function(r){ return r.take; });
-  const noWed = take.filter(function(r){ return r.isWed && !r.wed; });
-  if(noWed.length) return formError(noWed[0].company + " is on 30 September. Pick Forum, EIS, Both or Off-site.");
   const noDay = take.filter(function(r){ return !r.day; });
   if(!take.length) return formError("Tick at least one meeting.");
-  if(noDay.length) return formError(noDay[0].company + " has no day set — 30 September is two tabs, so it has to be picked.");
+  if(noDay.length) return formError(noDay[0].company + " has no day set — pick one.");
   let n = 0;
   for(let i = 0; i < take.length; i++){
     const r = take[i];
@@ -3871,11 +3829,6 @@ async function runImport(){
       background: r.account ? "Account ID " + r.account : ""
     };
     await saveMeeting(m, true);
-    if(r.wed){
-      const wid = slug(r.company);
-      const wt = state.targets[wid] || {};
-      await saveTarget(wid, {wed: r.wed, name: wt.name || r.company});
-    }
     n++;
   }
   state.imp = null;
@@ -3887,24 +3840,6 @@ async function runImport(){
   if(upd) bits.push(upd + (upd === 1 ? " updated" : " updated"));
   notice((bits.join(", ") || "Nothing to do") + " from the export" +
     (untimed ? ", " + untimed + " still without a time" : "") + ".");
-}
-
-/* who we saw on the Wednesday, before the congress proper opened */
-function wedBoard(){
-  const c = wedCounts();
-  if(!c.marked) return "";
-  return '<div class="sec-head" style="margin-bottom:9px"><div>' +
-    '<h2 style="font-size:17px">Before AAO opened</h2>' +
-    '<p>Wednesday 30 September ran two programmes at once. One mark per company on its card \u2014 Forum, ' +
-    'EIS, Both, or Off-site if we saw them away from either. Thursday to Sunday is EURETINA, so nothing ' +
-    'here applies to those days.</p></div></div>' +
-    '<div class="statstrip">' +
-      '<div class="stat"><div class="v">' + c.forum + '</div><div class="k">Forum only</div></div>' +
-      '<div class="stat"><div class="v">' + c.eis + '</div><div class="k">EIS only</div></div>' +
-      '<div class="stat accent"><div class="v">' + c.both + '</div><div class="k">Both</div></div>' +
-      '<div class="stat"><div class="v">' + c.offsite + '</div><div class="k">Off-site</div></div>' +
-      '<div class="stat"><div class="v">' + c.marked + '</div><div class="k">Companies marked</div></div>' +
-    '</div>';
 }
 
 function viewExec(){
@@ -4069,7 +4004,7 @@ function viewExec(){
     '<p>What we found, how the week was made up, and where it stands. Every fraction is out of the same <b>' + total +
     '</b> meetings, so no two figures on this page can disagree. Every tile opens what is behind its number.</p>' +
   '</div><div style="display:flex;gap:7px;flex-wrap:wrap">' + eventTags() + '</div></div>' +
-  findBar() + hero + second + briefList + missList + shape + wedBoard() +
+  findBar() + hero + second + briefList + missList + shape +
   (piStats().all
     ? '<div class="sec-head" style="margin-bottom:9px"><div><h2 style="font-size:17px">Investigators</h2>' +
       '<p>Reach into the people who run the studies, tracked separately from the companies.</p></div></div>' +
@@ -4086,7 +4021,7 @@ function viewExec(){
     '<button class="btn sm" data-import="1">Import meeting invites</button></div>') +
   '<div class="sec-head"><div><h2 style="font-size:17px">Account ledger</h2>' +
     '<p>Every company we are working, with the three pipeline states kept separate. Tick <b>Open coming in</b> for accounts that arrived already carrying an open opportunity; <b>Surfaced here</b> fills itself from the toggle on each meeting card.</p></div>' +
-    (unreviewed > 0 ? '<span class="chip ghost">' + unreviewed + ' Forum companies not yet reviewed</span>' : "") +
+    (unreviewed > 0 ? '<span class="chip ghost">' + unreviewed + ' showcase companies not yet reviewed</span>' : "") +
   '</div>' + ledger + teamPanel() + snapshotPanel();
 }
 
@@ -4312,7 +4247,7 @@ function sfAccounts(){
 function sfReportText(){
   const groups = sfAccounts();
   const gap = sfGap();
-  const out = ["EURETINA 2026 — Salesforce handover",
+  const out = ["AAO 2026 — Salesforce handover",
     "Generated " + new Date().toLocaleString(undefined,{weekday:"long", day:"numeric", month:"long"}),
     sfApprovedMeetings().length + " approved activities across " + groups.length + " accounts",
     "",
@@ -4460,7 +4395,7 @@ const SF_COLUMNS = [
   ["Due",              16, function(m, d){ return dlabel(DEBRIEF_WHEN, d.when); }],
   ["Ora in the room",  34, function(m, d){ return meetingOra(m).join(", "); }]
 ];
-/* the day tabs carry the date in their label ("Fri 11", "Thu 10" for the Forum),
+/* the day tabs carry the date in their label ("Fri 9", "Sat 10"),
    so the calendar date is read from there rather than kept in a second place */
 function sfDate(m){
   if(m.floor) return "Floor conversation";
@@ -5429,12 +5364,12 @@ function viewProgramme(key){
 
 /* ---------- where we are right now ----------
    On the day itself the useful question is not what the agenda says but what
-   is happening at this moment and what comes next. Vienna time explicitly:
+   is happening at this moment and what comes next. New Orleans time explicitly:
    a phone still on another country's clock would otherwise draw the line in
    the wrong place, which is worse than drawing none. */
 const MONTH_NO = {jan:1, feb:2, mar:3, apr:4, may:5, jun:6,
                   jul:7, aug:8, sep:9, oct:10, nov:11, dec:12};
-function viennaNow(){
+function congressNow(){
   try{
     const f = new Intl.DateTimeFormat("en-GB", {timeZone: "America/Chicago",
       year: "numeric", month: "2-digit", day: "2-digit",
@@ -5460,7 +5395,7 @@ function dayDate(d){
 }
 function isToday(dayKey){
   const dd = dayDate(DAYS.filter(function(x){ return x.key === dayKey; })[0]);
-  const n = viennaNow();
+  const n = congressNow();
   return !!(dd && dd.y === n.y && dd.m === n.m && dd.d === n.d);
 }
 /* Logging a conversation almost always happens on the day it happened, so the
@@ -5481,7 +5416,7 @@ function nowRow(m){
 let NOW_NEXT = null;
 function withNow(items, dayKey){
   if(!isToday(dayKey)) return items.map(function(x){ return x.html; });
-  const now = viennaNow().mins;
+  const now = congressNow().mins;
   const out = [];
   let placed = false, next = null;
   items.forEach(function(x){
@@ -5593,62 +5528,6 @@ function forumMeetingRow(m){
 }
 
 /* ---------- company card ---------- */
-/* ---------- Wednesday, before the congress ----------
-   Two programmes run on 30 September. A company was at one, at the other, at
-   both, or we saw them away from either — four answers, one of them true, so
-   this is one value and not a set. Thursday to Sunday is EURETINA and fixed;
-   nothing here applies to those days. */
-const WED_PROG = [
-  {k:"forum",   label:"Forum"},
-  {k:"eis",     label:"EIS"},
-  {k:"both",    label:"Both"},
-  {k:"offsite", label:"Off-site"}
-];
-const WED_KEYS = WED_PROG.map(function(o){ return o.k; });
-/* a tab a card can actually sit on: Both and Off-site are neither */
-const WED_TAB = {forum:"forum", eis:"eis", both:"forum", offsite:"forum"};
-function wedOf(id){
-  const w = (state.targets[id] || {}).wed;
-  if(typeof w === "string") return WED_KEYS.indexOf(w) > -1 ? w : "";
-  /* an earlier version of this stored a list; read it back as the one answer
-     it was describing, so nothing marked before now is lost */
-  if(Array.isArray(w)){
-    const at = w.filter(function(x){ return x === "forum" || x === "eis"; });
-    if(at.length > 1) return "both";
-    if(at.length === 1) return at[0];
-    return w.indexOf("offsite") > -1 ? "offsite" : "";
-  }
-  return "";
-}
-function wedLabel(v){
-  const o = WED_PROG.filter(function(x){ return x.k === v; })[0];
-  return o ? o.label : "Not marked";
-}
-function setWed(id, k, name){
-  const t = state.targets[id] || {};
-  saveTarget(id, {wed: wedOf(id) === k ? "" : k, name: t.name || name || id});
-}
-function wedRow(id, name){
-  const v = wedOf(id);
-  return RW('<div class="wedrow">' +
-    '<span class="wedlab">Wed 30 Sept</span>' +
-    WED_PROG.map(function(o){
-      return '<button class="sbtn wed" data-wed="' + esc(id) + '|' + o.k +
-        '" aria-pressed="' + (v === o.k) + '">' + o.label + '</button>';
-    }).join("") +
-    (v ? "" : '<span class="wedhint">Not marked</span>') +
-  '</div>');
-}
-function wedCounts(){
-  const c = {forum:0, eis:0, both:0, offsite:0, marked:0};
-  Object.keys(state.targets).forEach(function(k){
-    const v = wedOf(k);
-    if(!v) return;
-    c[v]++; c.marked++;
-  });
-  return c;
-}
-
 /* The stand, on whichever card the company appears — Targets and the floor
    are the same card now, so the booth travels with it. */
 function boothChip(name){
@@ -5743,7 +5622,7 @@ function companyCard(c){
         '<button class="tog" data-acc="' + c.id + '|newEngagement|' + esc(c.name) + '" aria-pressed="' + (!!t.newEngagement) + '">New engagement</button>' +
       '</div>' +
       (t.activeOpp ? '<input class="note" style="min-height:0" data-oppnote="' + c.id + '" value="' + esc(t.oppNote||"") + '" placeholder="Which opportunity is open">' : "") +
-      wedRow(c.id, c.name) + '<textarea class="note" data-note="' + c.id + '" placeholder="Why they matter to us, who owns it, what we want from them…">' + esc(t.note||"") + '</textarea>' +
+      '<textarea class="note" data-note="' + c.id + '" placeholder="Why they matter to us, who owns it, what we want from them…">' + esc(t.note||"") + '</textarea>' +
       /* Marking that we cornered them records THAT it happened, never WHEN.
          This is the route from a tracked-down conversation to a card on the
          day it actually happened — the exhibitor cards have had it all along
@@ -5770,7 +5649,7 @@ function viewTargets(){
   '<div class="sec-head"><div>' +
     '<p class="eyebrow">Day 0 target board</p>' +
     '<h2>All ' + COMPANIES.length + ' companies on the Wednesday agendas</h2>' +
-    '<p>Every company named on the Retina Forum and EIS programmes, in running order across both. Open one to see who is speaking, when they are up, and whether that person appears anywhere else on the day &mdash; then flag it. Anything you flag surfaces on the timeline with the Ora mark. Twenty-three are up more than once — on a panel as well as a presentation, or on both the Forum and EIS — and each of those carries one card with every slot on it, not two that disagree.</p>' +
+    '<p>Every company named on the Eyecelerator programme, in running order. Open one to see who is speaking, when they are up, and whether that person appears anywhere else on the day &mdash; then flag it. Anything you flag surfaces on the timeline with the Ora mark. A company that is up more than once — on a panel as well as in a showcase room — carries one card with every slot on it, not two that disagree.</p>' +
   '</div>' + RW('<button class="btn" data-newco="1">Add company</button>') + '</div>' +
   '<div class="statstrip">' +
     '<div class="stat"><div class="v">' + COMPANIES.length + '</div><div class="k">Named on Wednesday</div></div>' +
@@ -5792,7 +5671,7 @@ function viewTargets(){
   }).join("") + offStageBoard();
 }
 
-/* companies we are meeting who are not on the Forum stage */
+/* companies we are meeting who are not on the Eyecelerator stage */
 function offStageBoard(){
   const acc = accounts();
   const off = Object.keys(acc).map(function(k){ return acc[k]; })
@@ -5802,7 +5681,7 @@ function offStageBoard(){
   return '<div style="margin-top:8px">' +
     '<div class="sec-head" style="margin-bottom:9px"><div>' +
       '<h3 style="font-family:Archivo;font-size:15px;font-weight:600">Not on a Wednesday agenda</h3>' +
-      '<p style="margin-top:2px">' + off.length + ' companies we are meeting at EURETINA who do not appear on the Forum or EIS programmes</p>' +
+      '<p style="margin-top:2px">' + off.length + ' companies we are meeting at AAO who do not appear on the Eyecelerator programme</p>' +
     '</div></div>' +
     '<div class="cgrid">' + off.map(offCard).join("") + '</div>' +
   '</div>';
@@ -5870,7 +5749,6 @@ function offCard(a){
       (t.status ? '<button class="sbtn" data-status="' + a.id + '|">Clear</button>' : "") +
     '</div>' +
     '<textarea class="note" data-note="' + a.id + '" placeholder="Why they matter to us, who owns it, what we want from them…">' + esc(t.note||"") + '</textarea>' +
-    wedRow(a.id, a.name) +
     (a.meetings.length ? "" :
       '<div class="acctrm"><button class="btn sec sm" data-exmeet="' + esc(a.id) + '">+ Put it on a day</button>' +
       '<span class="rosterhint" style="margin:0">Opens the meeting form with ' + esc(a.name) +
@@ -5909,7 +5787,7 @@ function viewPIs(){
   '<div class="sec-head"><div>' +
     '<p class="eyebrow">Investigator target list</p>' +
     '<h2>Principal investigators</h2>' +
-    '<p>The people, not the companies. Who we want in front of at EURETINA, whether they already run something for Ora, and what we want out of the conversation.</p>' +
+    '<p>The people, not the companies. Who we want in front of at AAO, whether they already run something for Ora, and what we want out of the conversation.</p>' +
   '</div>' + RW('<button class="btn" data-newpi="1">Add investigator</button>') + '</div>' +
   '<div class="statstrip">' +
     '<div class="stat"><div class="v">' + s.live + '</div><div class="k">On the list</div></div>' +
@@ -5938,7 +5816,7 @@ function piCard(pi){
   const head = '<button class="cbtn" data-co="pi-' + pi.id + '" aria-expanded="' + open + '">' +
     '<span style="min-width:0"><span class="cname">' + esc(pi.name || "Unnamed") + '</span>' +
       '<span class="cslot">' + (where ? esc(where) : "country not set") +
-        (stage.length ? ' &middot; on the Forum stage' : '') + '</span>' +
+        (stage.length ? ' &middot; on the Eyecelerator stage' : '') + '</span>' +
       (specs.length ? '<span class="spectags">' + specs.slice(0,3).map(function(s){
           return '<span class="chip kind">' + esc(s) + '</span>'; }).join("") +
           (specs.length > 3 ? '<span class="chip ghost">+' + (specs.length-3) + '</span>' : "") + '</span>' : "") +
@@ -5956,7 +5834,7 @@ function piCard(pi){
       '<dt>Ora</dt><dd><span class="chip ' + rel.chip + '">' + rel.label + '</span>' +
         (has(pi.study) ? ' ' + esc(pi.study) : (pi.oraRel !== "none" ? ' <span class="sub">study not named</span>' : "")) + '</dd>' +
       (has(pi.email) ? '<dt>Email</dt><dd><span class="attlist">' + attendeeLine(pi.name + " mailto:" + pi.email).replace(esc(pi.name), esc(pi.email)) + '</span></dd>' : "") +
-      (stage.length ? '<dt>At the Forum</dt><dd>' + stage.map(function(x){
+      (stage.length ? '<dt>At Eyecelerator</dt><dd>' + stage.map(function(x){
           return esc(x.label) + ' <span class="mono" style="color:var(--ink-3)">' + esc(t12(x.time)) + '</span>'; }).join("<br>") + '</dd>' : "") +
       (m ? '<dt>Meeting</dt><dd>' + esc(m.company) + ' <span class="mono" style="color:var(--ink-3)">' +
             esc((DAYS.find(function(d){ return d.key === m.day; })||{}).label || "") + ' ' + esc(t12(m.time || "")) + '</span></dd>' : "") +
@@ -6174,7 +6052,7 @@ function meetingCard(m, inTimeline){
   const dotColor = debriefed ? "var(--green)" : (has(m.objective) ? "var(--amber)" : "var(--line-2)");
   const dotTitle = debriefed ? "Debriefed" : has(m.objective) ? "Has an objective — not debriefed yet" : "No objective yet";
 
-  /* on Forum day, warn if we have booked over the company's own pitch slot */
+  /* on Eyecelerator day, warn if we have booked over the company's own pitch slot */
   let stage = "";
   if(PROGRAMMES[m.day] && has(m.company)){
     const co = CO_BY_ID[slug(m.company)];
@@ -6278,7 +6156,7 @@ function meetingCard(m, inTimeline){
       (oraLines(m).length ? '<dt>Also from Ora</dt><dd><span class="attlist">' + oraLines(m).join("") + '</span></dd>' : "") +
     '</dl>' +
     (away.length ? '<p class="awaywarn">&#9888; ' + away.map(function(x){ return esc(x.name); }).join(", ") +
-      (away.length === 1 ? " is" : " are") + " not down as being in Vienna on this day.</p>" : "")));
+      (away.length === 1 ? " is" : " are") + " not down as being at the congress on this day.</p>" : "")));
   }
   blocks.push('<div class="block"><h4>Notes</h4><div class="notesbox"><div class="cap">Written here on the day &mdash; not saved, print the card if you need to write on it.</div></div></div>');
 
@@ -6506,7 +6384,7 @@ function openSfEditor(id){
       '<button class="btn sec sm" data-close="1">Close</button></header>' +
     '<div class="form">' +
       '<label class="f">Subject<input id="sf-subject" value="' + esc(f.subject) + '">' +
-        '<span class="hint">Keeping the EURETINA 2026 prefix means every activity from this week is one search away.</span></label>' +
+        '<span class="hint">Keeping the AAO 2026 prefix means every activity from this week is one search away.</span></label>' +
       '<label class="f">Sponsor contact<input id="sf-contact" value="' + esc(f.contact) + '">' +
         '<span class="hint">Who we actually met. First one listed is the primary — an activity only takes one.</span></label>' +
       '<label class="f">Body<textarea id="sf-body" style="min-height:200px">' + esc(f.body) + '</textarea></label>' +
@@ -7086,22 +6964,6 @@ document.addEventListener("click", e => {
     openEditor(null, todayKey(), nm);
     return;
   }
-  if(t.dataset.wed){
-    const bits = t.dataset.wed.split("|");
-    const nm = (state.targets[bits[0]] || {}).name || (CO_BY_ID[bits[0]] || {}).name || bits[0];
-    setWed(bits[0], bits[1], nm);
-    return;
-  }
-  if(t.dataset.impwed && state.imp && state.imp.rows){
-    const bits = t.dataset.impwed.split("|");
-    const r = state.imp.rows[+bits[0]];
-    if(r){
-      r.wed = r.wed === bits[1] ? "" : bits[1];
-      r.day = r.wed ? WED_TAB[r.wed] : "";
-      importPanel();
-    }
-    return;
-  }
   if(t.hasAttribute("data-import")){ state.imp = {text:"", rows:[], done:0}; importPanel(); return; }
   if(t.hasAttribute("data-impread")){
     const box = document.getElementById("impcsv");
@@ -7214,7 +7076,7 @@ document.addEventListener("keydown", e => { if(e.key === "Escape") closeEditor()
 setInterval(function(){
   const el = document.getElementById("nowclock");
   if(!el) return;
-  const now = viennaNow().mins;
+  const now = congressNow().mins;
   el.textContent = t12(hhmm(now));
   if(NOW_NEXT !== null && now >= NOW_NEXT){
     const ed = document.getElementById("editor");
