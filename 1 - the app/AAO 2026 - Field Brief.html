@@ -1068,6 +1068,11 @@ body.packing #packout{display:block}
     font-weight:700; color:#fff; margin:0 0 10pt; letter-spacing:-.9pt}
   .pk-cover h1 span{display:block; font-weight:600; color:#9DB8CF; letter-spacing:-.6pt}
   .pk-sub{font-size:10.5pt; line-height:1.4; color:#9DB8CF; margin:0}
+  .pk-by{margin-top:12mm; padding-left:9pt; border-left:2px solid #3DB9AB}
+  .pk-bylab{display:block; font-family:"Archivo",sans-serif; font-size:7pt; font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase; color:#3DB9AB; margin-bottom:3pt}
+  .pk-by b{display:block; font-family:"Archivo",sans-serif; font-size:12pt; font-weight:700; color:#fff; line-height:1.2}
+  .pk-byrole{display:block; font-size:9pt; color:#9DB8CF; line-height:1.35; margin-top:1pt}
 
   /* four tiles in 100mm is 25mm each, and "Companies briefed" does not fit
      in 25mm at any size worth reading. Two by two. */
@@ -7239,6 +7244,18 @@ function tierOf(m){
   return (m.format === "formal") ? 1 : 2;
 }
 
+/* The pack leaves the laptop and travels without its author, so it says who
+   made it. The title is read from the team list, not typed here, so a change
+   of role on the Team page reaches the next export. */
+function packByline(){
+  const me = team().filter(function(p){
+    return p && String(p.name || "").replace(/\s+/g, " ").trim() === OWNER_NAME; })[0] || {};
+  return '<div class="pk-by"><span class="pk-bylab">Prepared by</span>' +
+    '<b>' + esc(OWNER_NAME) + '</b>' +
+    (has(me.role) ? '<span class="pk-byrole">' + esc(String(me.role).trim()) + ', Ora</span>' : "") +
+  '</div>';
+}
+
 function packCo(name, cls){
   const b = BRIEF_BY_ID[slug(name)];
   const inner = esc(name);
@@ -7452,6 +7469,7 @@ function packHTML(){
     '<p class="pk-eyebrow">Business Development · Congress Operations</p>' +
     '<h1>' + esc(title) + '<span>Field Brief</span></h1>' +
     '<p class="pk-sub">' + esc(span) + '<br>' + esc(venue) + '</p>' +
+    packByline() +
     '<div class="pk-facts pk-foot">' +
       '<div><b>' + all.length + '</b><span>Meetings</span></div>' +
       '<div><b>' + briefNames.length + '</b><span>Companies briefed</span></div>' +
