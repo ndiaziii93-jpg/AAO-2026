@@ -53,7 +53,9 @@ Those honour `@page size`. Safari may not.
 divider pages and the spine on a brief card. It must never encode a value.
 Bars in the "meetings per day" chart are **one hue stepped light to dark by
 magnitude**, direct-labelled. Colouring a bar by its rank is how a chart starts
-lying.
+lying. They stand as vertical columns, one per congress day in the order the
+week runs, and a day with nothing booked keeps its slot at zero rather than
+dropping out. Open floor time lives on each day's own page, not on this chart.
 
 ### 4. Type scale, sized for the 100mm text column
 

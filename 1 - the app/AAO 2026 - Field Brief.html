@@ -1143,17 +1143,17 @@ body.packing #packout{display:block}
     padding-bottom:4pt; border-bottom:1px solid #DCE3EA;
     break-after:avoid; page-break-after:avoid}
   .pk-chart{margin:0 0 14pt}
-  .pk-ch-row{display:flex; align-items:center; gap:7pt; margin-bottom:5pt;
-    break-inside:avoid; page-break-inside:avoid}
-  .pk-ch-lab{width:50pt; flex:none; font-family:"Archivo",sans-serif; font-size:8.5pt;
-    font-weight:600; color:#0B2A4A; line-height:1.2}
-  .pk-ch-track{flex:1; display:flex; align-items:center; gap:6pt; min-width:0}
-  .pk-ch-bar{height:12pt; border-radius:0 3pt 3pt 0; display:block; min-width:2pt}
-  .pk-ch-val{font-family:"Archivo",sans-serif; font-size:9.5pt; font-weight:700; color:#0A2337;
-    font-variant-numeric:tabular-nums}
-  .pk-ch-note{width:54pt; flex:none; text-align:right; font-size:7.5pt; color:#14776C;
-    font-family:"IBM Plex Mono",monospace}
+  .pk-cols{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; column-gap:6pt;
+    height:34mm; border-bottom:1px solid #B9C6D3; break-inside:avoid; page-break-inside:avoid}
+  .pk-col{display:flex; flex-direction:column; justify-content:flex-end; align-items:center;
+    position:relative; min-width:0}
+  .pk-col-val{font-family:"Archivo",sans-serif; font-size:9.5pt; font-weight:700; color:#0A2337;
+    font-variant-numeric:tabular-nums; line-height:1; margin-bottom:3pt}
+  .pk-col-bar{display:block; width:62%; border-radius:3pt 3pt 0 0; flex:none}
+  .pk-col-lab{position:absolute; top:100%; left:0; right:0; text-align:center; padding-top:4pt;
+    font-family:"Archivo",sans-serif; font-size:8.5pt; font-weight:600; color:#0B2A4A; white-space:nowrap}
   .pk-ch-foot{font-size:7.5pt; color:#8195A7; margin:6pt 0 0; line-height:1.4}
+  .pk-cols + .pk-ch-foot{margin-top:17pt}
 
   /* ---------- what needs doing ---------- */
   /* one per row. Half of 100mm is 27 characters and "double-booked" was
@@ -7482,7 +7482,6 @@ function packHTML(){
   /* ================= the one page a VP reads ================= */
   const peak = dayList.slice().sort(function(a, b){
     return (by[b.key] || []).length - (by[a.key] || []).length; })[0];
-  const maxN = peak ? (by[peak.key] || []).length : 1;
   const noBrief = all.filter(function(m){ return !BRIEF_BY_ID[slug(m.company)]; });
   const noObj = all.filter(function(m){ return !has(m.objective); });
   const heldNoNote = all.filter(function(m){ return wasHeld(m) && !has(debriefOf(m.id).notes); });
@@ -7513,23 +7512,24 @@ function packHTML(){
       (peak ? ', weighted to ' + esc(peak.label || peak.long) : "") +
       '. ' + briefNames.length + ' companies carry a brief.</p>';
 
-  /* the week's shape: one hue, light to dark, counts labelled on the bar */
-  h += '<p class="pk-ch-title">Meetings per day</p><div class="pk-chart">' +
-    dayList.map(function(d){
-      const ms = by[d.key] || [], n = ms.length;
-      const pct = Math.max(6, Math.round(n / maxN * 100));
-      const op = 0.42 + 0.58 * (n / maxN);     /* light to dark with magnitude */
-      const op2 = openMins(ms);
-      return '<div class="pk-ch-row">' +
-        '<span class="pk-ch-lab">' + esc(d.label || d.short || d.key) + '</span>' +
-        '<span class="pk-ch-track"><span class="pk-ch-bar" style="width:' + pct +
-          '%;background:rgba(10,35,55,' + op.toFixed(2) + ')"></span>' +
-          '<b class="pk-ch-val">' + n + '</b></span>' +
-        '<span class="pk-ch-note">' + (op2 >= 45 ? esc(gapLabel(op2)) : "—") + '</span>' +
+  /* the week's shape: one column per congress day, read left to right as the
+     week runs. One hue stepped light to dark by magnitude, the count on top of
+     each column. A day with nothing booked keeps its slot at zero, so a quiet
+     day reads as quiet rather than vanishing. Open floor time is on each day's
+     own page. */
+  const wkMax = Math.max(1, ...DAYS.map(function(d){ return (by[d.key] || []).length; }));
+  h += '<p class="pk-ch-title">Meetings per day</p><div class="pk-chart"><div class="pk-cols">' +
+    DAYS.map(function(d){
+      const n = (by[d.key] || []).length;
+      const ht = n ? Math.max(4, Math.round(n / wkMax * 100)) : 0;
+      const op = 0.42 + 0.58 * (n / wkMax);
+      return '<div class="pk-col">' +
+        '<b class="pk-col-val">' + n + '</b>' +
+        '<span class="pk-col-bar" style="height:calc((34mm - 16pt) * ' + (ht / 100).toFixed(3) + ');background:rgba(10,35,55,' + op.toFixed(2) + ')"></span>' +
+        '<span class="pk-col-lab">' + esc(d.label || d.short || d.key) + '</span>' +
       '</div>';
     }).join("") +
-    '<p class="pk-ch-foot">Bar length is meetings booked. The right-hand column is ' +
-      'unbooked time between the first and last of the day — the floor.</p></div>';
+    '</div><p class="pk-ch-foot">Column height is meetings booked that day.</p></div>';
 
   /* how the week divides by tier, and what the tiers mean - a chip nobody
      can decode is worse than no chip */
