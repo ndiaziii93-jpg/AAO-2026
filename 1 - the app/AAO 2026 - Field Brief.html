@@ -1068,7 +1068,7 @@ body.packing #packout{display:block}
     font-weight:700; color:#fff; margin:0 0 10pt; letter-spacing:-.9pt}
   .pk-cover h1 span{display:block; font-weight:600; color:#9DB8CF; letter-spacing:-.6pt}
   .pk-sub{font-size:10.5pt; line-height:1.4; color:#9DB8CF; margin:0}
-  .pk-by{margin-top:12mm; padding-left:9pt; border-left:2px solid #3DB9AB}
+  .pk-by{position:absolute; left:10mm; right:10mm; bottom:24mm; padding-left:9pt; border-left:2px solid #3DB9AB}
   .pk-bylab{display:block; font-family:"Archivo",sans-serif; font-size:7pt; font-weight:600;
     letter-spacing:.16em; text-transform:uppercase; color:#3DB9AB; margin-bottom:3pt}
   .pk-by b{display:block; font-family:"Archivo",sans-serif; font-size:12pt; font-weight:700; color:#fff; line-height:1.2}
@@ -1082,7 +1082,7 @@ body.packing #packout{display:block}
   .pk-facts b{display:block; font-family:"Archivo",sans-serif; font-size:19pt; font-weight:700;
     line-height:1; color:#fff; font-variant-numeric:tabular-nums; letter-spacing:-.7pt}
   .pk-facts span{display:block; font-size:7.5pt; color:#9DB8CF; margin-top:3pt; line-height:1.3}
-  .pk-facts.pk-foot{position:absolute; left:10mm; right:10mm; bottom:24mm}
+  .pk-facts.pk-foot{position:absolute; left:10mm; right:10mm; bottom:42mm}
   .pk-cover .pk-conf{position:absolute; left:10mm; right:10mm; bottom:9mm;
     font-size:7.5pt; line-height:1.45; color:#6E8BA6; border-top:1px solid #1E4368;
     padding-top:7pt; margin:0}
@@ -2188,6 +2188,8 @@ const STORE_KEY = "aao2026-brief";
    by looking, instead of by opening both. */
 const BUILD = "07 Oct 2026";
 const OWNER_NAME = "Norberto Diaz";
+/* how the author signs the pack, which is not the same as their role on the team list */
+const OWNER_TITLE = "Head of International Business Development";
 
 let DIRTY = false;          /* changed since the last backup was saved */
 let STORE_FULL = false;     /* the browser refused a write */
@@ -7245,14 +7247,11 @@ function tierOf(m){
 }
 
 /* The pack leaves the laptop and travels without its author, so it says who
-   made it. The title is read from the team list, not typed here, so a change
-   of role on the Team page reaches the next export. */
+   made it, signed off at the foot of the cover like a letter. */
 function packByline(){
-  const me = team().filter(function(p){
-    return p && String(p.name || "").replace(/\s+/g, " ").trim() === OWNER_NAME; })[0] || {};
   return '<div class="pk-by"><span class="pk-bylab">Prepared by</span>' +
     '<b>' + esc(OWNER_NAME) + '</b>' +
-    (has(me.role) ? '<span class="pk-byrole">' + esc(String(me.role).trim()) + ', Ora</span>' : "") +
+    '<span class="pk-byrole">' + esc(OWNER_TITLE) + ', Ora</span>' +
   '</div>';
 }
 
@@ -7469,13 +7468,13 @@ function packHTML(){
     '<p class="pk-eyebrow">Business Development · Congress Operations</p>' +
     '<h1>' + esc(title) + '<span>Field Brief</span></h1>' +
     '<p class="pk-sub">' + esc(span) + '<br>' + esc(venue) + '</p>' +
-    packByline() +
     '<div class="pk-facts pk-foot">' +
       '<div><b>' + all.length + '</b><span>Meetings</span></div>' +
       '<div><b>' + briefNames.length + '</b><span>Companies briefed</span></div>' +
       '<div><b>' + dayList.length + '</b><span>Days live</span></div>' +
       '<div><b>' + held + '</b><span>Held so far</span></div>' +
     '</div>' +
+    packByline() +
     '<p class="pk-conf"><b>Ora internal · confidential.</b> Prepared ' + esc(stamp) +
       '. Contains client and prospect information — not to be forwarded outside Ora.</p>' +
   '</section>';
