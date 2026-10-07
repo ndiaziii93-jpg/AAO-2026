@@ -1250,6 +1250,9 @@ body.packing #packout{display:block}
   .pk-b p{margin:0 0 7pt; font-size:10.2pt; line-height:1.5}
   .pk-blab{display:block; font-family:"Archivo",sans-serif; font-size:7pt; font-weight:600;
     letter-spacing:.13em; text-transform:uppercase; color:#C41E23; margin-bottom:2pt}
+  .pk-backs{margin:7pt 0 0; display:flex; flex-wrap:wrap; gap:3pt 10pt}
+  .pk-back{font-family:"Archivo",sans-serif; font-size:8.5pt; font-weight:600; color:#C41E23;
+    text-decoration:none}
   .pk-start{background:#0A2337; color:#fff; border-radius:6pt; padding:9pt 10pt;
     font-size:10.2pt; line-height:1.5; margin-top:2pt;
     break-inside:avoid; page-break-inside:avoid}
@@ -7265,7 +7268,7 @@ function packCo(name, cls){
 function packRule(where, back){
   return '<div class="pk-rule"><span class="pk-mark">Ora</span>' +
     '<span class="pk-where">' + esc(where) + '</span>' +
-    (back === false ? "" : '<a class="pk-up" href="#pk-exec">Contents</a>') + '</div>';
+    (back === false ? "" : '<a class="pk-up" href="#pk-contents">Contents</a>') + '</div>';
 }
 
 /* the app already has a mins(); these are the pack's own */
@@ -7293,7 +7296,7 @@ function packMeeting(m){
                 .map(function(c){ return c.name; });
   const e = endOf(m), briefed = !!BRIEF_BY_ID[slug(cos[0] || m.company)];
   const tier = tierOf(m), ours = oursList(m);
-  return '<div class="pk-row' + (held ? " held" : "") + '">' +
+  return '<div class="pk-row' + (held ? " held" : "") + '" id="m-' + esc(String(m.id)) + '">' +
     '<div class="pk-gut">' + esc(t12(m.time || "") || "—") +
       (e !== null ? '<span class="to">' + esc(t12(hhmm(e))) + '</span>' : "") + '</div>' +
     '<div class="pk-body"><div class="pk-card">' +
@@ -7326,16 +7329,9 @@ function packMeeting(m){
     '</div></div></div>';
 }
 
-function packGap(from, to){
-  const n = to - from;
-  if(n < 45) return "";
-  return '<div class="pk-row pk-open"><div class="pk-gut">' + esc(t12(hhmm(from))) +
-    '<span class="to">' + esc(t12(hhmm(to))) + '</span></div>' +
-    '<div class="pk-body"><div class="pk-card">' +
-      '<span class="pk-co">Open floor</span> <span class="pk-chip teal">' +
-      esc(gapLabel(n)) + '</span>' +
-    '</div></div></div>';
-}
+/* Unbooked time between meetings is not printed: the author asked for it out
+   of the pack everywhere, and readers took it as a call to fill the gaps. */
+function packGap(from, to){ return ""; }
 
 function packClash(prev, m, over){
   return '<div class="pk-row pk-clash"><div class="pk-gut"></div>' +
@@ -7515,8 +7511,7 @@ function packHTML(){
   /* the week's shape: one column per congress day, read left to right as the
      week runs. One hue stepped light to dark by magnitude, the count on top of
      each column. A day with nothing booked keeps its slot at zero, so a quiet
-     day reads as quiet rather than vanishing. Open floor time is on each day's
-     own page. */
+     day reads as quiet rather than vanishing. */
   const wkMax = Math.max(1, ...DAYS.map(function(d){ return (by[d.key] || []).length; }));
   h += '<p class="pk-ch-title">Meetings per day</p><div class="pk-chart"><div class="pk-cols">' +
     DAYS.map(function(d){
@@ -7543,7 +7538,10 @@ function packHTML(){
         esc(TIERS[t].why) + '</span></div>';
     }).join("") + '</div>';
 
-  h += '<p class="pk-ch-title">What still needs doing</p>';
+  /* the exec page ends here. What still needs doing and the contents start
+     a page of their own, so neither is cut in half by the page edge. */
+  h += '</section><section class="pk-page" id="pk-contents">' + packRule(title, false) +
+    '<p class="pk-ch-title">What still needs doing</p>';
   h += flags.length
     ? '<div class="pk-flags">' + flags.map(function(f){
         return '<div class="pk-flag"><b>' + f[0] + '</b>' +
@@ -7582,7 +7580,6 @@ function packHTML(){
   DAYS.forEach(function(day){
     const ms = by[day.key] || [];
     if(!ms.length) return;
-    const op = openMins(ms);
     h += '<section class="pk-page" id="d-' + day.key + '">' +
       packRule(day.long || day.label) +
       '<div class="pk-dayhead">' +
@@ -7591,7 +7588,6 @@ function packHTML(){
         '<p class="pk-dmeta">' + esc(day.venue || "") + '</p></div>' +
         '<div class="pk-daynums"><span><b>' + ms.length + '</b>' +
           (ms.length === 1 ? "meeting" : "meetings") + '</span>' +
-          (op >= 45 ? '<span><b>' + Math.round(op / 60 * 10) / 10 + 'h</b>open</span>' : "") +
         '</div>' +
       '</div>' +
       packProgramme(day.key) +
@@ -7609,6 +7605,32 @@ function packHTML(){
     h += packDivider("02", "Before the room", "Company briefs",
       "What they do, where they stand, why it matters to us, and the line that opens it.");
     h += '<section class="pk-page" id="sec-briefs">' + packRule("Company briefs");
+    /* A PDF cannot know which page the reader came from, so each brief links
+       back to the places that link to it: its meetings, else the day its
+       company presents, else the contents. */
+    const mtgBy = {};
+    all.forEach(function(m){
+      if(!has(m.company)) return;
+      ((typeof meetingCos === "function" ? meetingCos(m) : [{name: m.company}])).forEach(function(c){
+        const k = slug(c.name || "");
+        (mtgBy[k] = mtgBy[k] || []).push(m);
+      });
+    });
+    const stageDay = function(k){
+      const co = CO_BY_ID[k];
+      return co ? DAYS.filter(function(d){ return PROGRAMMES[d.key] && d.key === (co.dayKey || "eyec"); })[0] : null;
+    };
+    const backLinks = function(nm){
+      const k = slug(nm), ms = mtgBy[k] || [];
+      if(ms.length) return ms.map(function(m){
+        const d = DAYS.filter(function(x){ return x.key === m.day; })[0] || {};
+        return '<a class="pk-back" href="#m-' + esc(String(m.id)) + '">\u2039 Back to the meeting \u00b7 ' +
+          esc([d.label, t12(m.time || "")].filter(has).join(", ")) + '</a>';
+      }).join("");
+      const sd = stageDay(k);
+      if(sd) return '<a class="pk-back" href="#d-' + sd.key + '">\u2039 Back to ' + esc(sd.long || sd.label) + '</a>';
+      return '<a class="pk-back" href="#pk-contents">\u2039 Back to contents</a>';
+    };
     briefNames.forEach(function(nm){
       const b = BRIEFS[nm] || {};
       const body = [["What they do", b.what], ["Where they stand", b.stage],
@@ -7624,6 +7646,7 @@ function packHTML(){
         /* the operative line gets its own box: it is the one read walking in */
         (has(b.start) ? '<div class="pk-start"><span class="pk-blab">Where to start</span>' +
           esc(b.start) + '</div>' : "") +
+        '<p class="pk-backs">' + backLinks(nm) + '</p>' +
       '</div>';
     });
     h += '</section>';
