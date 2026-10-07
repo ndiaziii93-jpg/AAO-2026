@@ -2182,6 +2182,7 @@ const STORE_KEY = "aao2026-brief";
    just sent newer than the one I am typing into" is a question you can answer
    by looking, instead of by opening both. */
 const BUILD = "07 Oct 2026";
+const OWNER_NAME = "Norberto Diaz";
 
 let DIRTY = false;          /* changed since the last backup was saved */
 let STORE_FULL = false;     /* the browser refused a write */
@@ -2378,7 +2379,7 @@ function initials(name, email){
 }
 function faceHTML(p){
   return '<span class="face' + (p.editing ? " editing" : "") + '" style="background:' +
-    faceColor(p.email) + '">' + esc(initials(p.name, p.email)) + '</span>';
+    (p.me ? FACE_INK[2] : faceColor(p.email || p.name)) + '">' + esc(initials(p.name, p.email)) + '</span>';
 }
 /* what someone has open, said the way a person would say it */
 function editingLabel(id){
@@ -2532,7 +2533,8 @@ setTimeout(dismissSplash, 8000);
 
 async function boot(){
   if(SNAPSHOT){ READONLY = true; BOOTING = false; connect(); dismissSplash(); return; }
-  ME = {name: "", email: "", role: "editor"};
+  /* one author, so the face in the corner is always the same person */
+  ME = {name: OWNER_NAME, email: "", role: "editor"};
   READONLY = false;
   BOOTING = false;
   await connect();
@@ -3101,7 +3103,6 @@ async function acceptProposal(id){
 function team(){ return Array.isArray(state.meta.people) ? state.meta.people : []; }
 function person(id){ return team().filter(function(p){ return p.id === id; })[0]; }
 function personName(id){ const p = person(id); return p ? p.name : ""; }
-function initials(n){ return String(n||"").trim().split(/\s+/).slice(0,2).map(function(w){ return w[0]; }).join("").toUpperCase(); }
 function meetingOwner(m){ return m.ownerId ? personName(m.ownerId) : (m.owner || ""); }
 function meetingOra(m){
   if(Array.isArray(m.oraIds) && m.oraIds.length) return m.oraIds.map(personName).filter(Boolean);
@@ -3941,6 +3942,53 @@ function viewExec(){
       '</div>'
     : "";
 
+  /* The list above only sees companies we have a meeting with, so a company we
+     sit across from on Ora's own showcase stage, or one flagged on the Targets
+     tab, could go unbriefed with nothing to say so. Same chips, same editor. */
+  const offBrief = (function(){
+    const inNoBrief = {};
+    noBrief.forEach(function(n){ inNoBrief[slug(n)] = 1; });
+    const want = function(id){ return id && !BRIEF_BY_ID[id] && !inNoBrief[id]; };
+    const room = [], flagged = [], seen = {};
+    EYEC.forEach(function(s){
+      if(s.kind !== "showcase" || !(s.chairs || []).some(function(c){ return /— Ora$/.test(c); })) return;
+      (s.companies || []).forEach(function(x){
+        const id = slug(x.c);
+        if(!want(id) || seen[id]) return;
+        seen[id] = 1; room.push({name: (CO_BY_ID[id] || {}).name || x.c, title: s.title});
+      });
+    });
+    Object.keys(state.targets).forEach(function(id){
+      const t = state.targets[id] || {};
+      if(!(t.status === "target" || t.status === "booked") || !want(id) || seen[id]) return;
+      seen[id] = 1; flagged.push({name: t.name || (CO_BY_ID[id] || {}).name || id});
+    });
+    const byName = function(a, b){ return a.name.localeCompare(b.name); };
+    return {room: room.sort(byName), flagged: flagged.sort(byName)};
+  })();
+  const offChips = function(list){
+    return '<div style="display:flex;gap:5px;flex-wrap:wrap">' + list.map(function(c){
+      return READONLY
+        ? '<span class="chip amber">' + esc(c.name) + '</span>'
+        : '<button class="chip amber" data-brief="' + esc(c.name) + '">' + esc(c.name) + '</button>'; }).join("") +
+    '</div>';
+  };
+  const nOff = offBrief.room.length + offBrief.flagged.length;
+  const offBriefList = nOff
+    ? '<div class="needtime" style="margin-bottom:22px"><p class="eyebrow">No meeting, no brief yet &mdash; ' +
+        nOff + (nOff === 1 ? ' company' : ' companies') + '</p>' +
+      (offBrief.room.length
+        ? '<p class="dhint" style="margin:0 0 6px">On Ora&rsquo;s own showcase stage &mdash; ' +
+            esc(offBrief.room[0].title.replace(/^Showcase — /, "")) + '</p>' + offChips(offBrief.room) : "") +
+      (offBrief.flagged.length
+        ? '<p class="dhint" style="margin:' + (offBrief.room.length ? '12px' : '0') + ' 0 6px">Flagged on the Targets tab</p>' +
+            offChips(offBrief.flagged) : "") +
+      '<p class="dhint" style="margin:9px 0 0">Companies we will be in front of without a booked meeting. ' +
+        'Flag any company on the Targets tab and it joins this list until it has a brief.' +
+        RW(' Tap a name to write one, or paste the whole brief in.') + '</p>' +
+      '</div>'
+    : "";
+
   const missList = nMissed
     ? '<div class="needtime" style="margin-bottom:22px"><p class="eyebrow">Planned, not yet reached &mdash; ' + nMissed +
         (nMissed === 1 ? ' company' : ' companies') + '</p><div style="display:flex;gap:5px;flex-wrap:wrap">' +
@@ -4004,7 +4052,7 @@ function viewExec(){
     '<p>What we found, how the week was made up, and where it stands. Every fraction is out of the same <b>' + total +
     '</b> meetings, so no two figures on this page can disagree. Every tile opens what is behind its number.</p>' +
   '</div><div style="display:flex;gap:7px;flex-wrap:wrap">' + eventTags() + '</div></div>' +
-  findBar() + hero + second + briefList + missList + shape +
+  findBar() + hero + second + briefList + offBriefList + missList + shape +
   (piStats().all
     ? '<div class="sec-head" style="margin-bottom:9px"><div><h2 style="font-size:17px">Investigators</h2>' +
       '<p>Reach into the people who run the studies, tracked separately from the companies.</p></div></div>' +
