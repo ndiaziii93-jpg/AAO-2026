@@ -1,0 +1,7 @@
+# Real meeting data never goes in the repo: backups, briefs, invites, exports.
+*.json
+*.csv
+*.pdf
+2 - briefs to paste in/
+3 - sample export/
+HANDOFF.md
