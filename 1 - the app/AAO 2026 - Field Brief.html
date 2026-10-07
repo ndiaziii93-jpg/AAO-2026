@@ -7222,8 +7222,17 @@ const TIERS = {
   3: {n:"Tier 3", what:"Nobody assigned yet",
       why:"No one from Ora is down to take it. Until that changes it is not covered."}
 };
+/* Who from Ora is in the room, read the same way the meeting card reads it.
+   This used to read only the free-text "ours" field, which the people picker
+   no longer writes, so every assigned meeting printed as nobody assigned and
+   fell to Tier 3. The owner counts: an owned meeting is a covered meeting. */
 function oursList(m){
-  return String((m && m.ours) || "").split(",").map(function(x){ return x.trim(); }).filter(Boolean);
+  if(!m) return [];
+  const out = meetingOra(m).slice();
+  const own = meetingOwner(m);
+  if(has(own) && out.map(function(x){ return String(x).replace(/\s+/g, " ").trim(); })
+                   .indexOf(String(own).replace(/\s+/g, " ").trim()) < 0) out.unshift(String(own).trim());
+  return out;
 }
 function tierOf(m){
   if(!oursList(m).length) return 3;
