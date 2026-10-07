@@ -91,6 +91,11 @@ breaking and both are fixed:
   `-webkit-box-decoration-break:clone`, so every fragment gets its own border,
   radius and full-height gradient.
 
+Every brief after the first starts on a new page (`.pk-b + .pk-b`
+breaks before), so a page never holds the end of one company and the start of
+the next. That does not undo the rule above: a brief taller than a page still
+runs onto the next one, it just never shares a page with another company.
+
 `.pk-start` (the "Where to start" box) keeps `break-inside:avoid` — that is the
 line read walking into the room and it must never split.
 

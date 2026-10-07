@@ -1244,6 +1244,10 @@ body.packing #packout{display:block}
     background:linear-gradient(180deg,#E21E28,#932951,#273C8A,#337F9C,#3DB9AB)
                  left top / 3pt 100% no-repeat, #fff;
     -webkit-box-decoration-break:clone; box-decoration-break:clone}
+  /* one company per page: every brief after the first starts at the top of a
+     page, so no page carries the tail of one company and the head of the
+     next. A brief longer than a page still runs on (section 6 of the spec). */
+  .pk-b + .pk-b{break-before:page; page-break-before:always}
   .pk-b h3{font-family:"Archivo",sans-serif; font-size:13pt; font-weight:700; color:#0B2A4A;
     margin:0 0 7pt; display:flex; align-items:baseline; gap:7pt; flex-wrap:wrap;
     letter-spacing:-.4pt; line-height:1.15; break-after:avoid; page-break-after:avoid}
