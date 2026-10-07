@@ -1250,7 +1250,7 @@ body.packing #packout{display:block}
   .pk-b p{margin:0 0 7pt; font-size:10.2pt; line-height:1.5}
   .pk-blab{display:block; font-family:"Archivo",sans-serif; font-size:7pt; font-weight:600;
     letter-spacing:.13em; text-transform:uppercase; color:#C41E23; margin-bottom:2pt}
-  .pk-backs{margin:7pt 0 0; display:flex; flex-wrap:wrap; gap:3pt 10pt}
+  .pk-backs{margin:-2pt 0 6pt; display:flex; flex-wrap:wrap; gap:3pt 10pt}
   .pk-back{font-family:"Archivo",sans-serif; font-size:8.5pt; font-weight:600; color:#C41E23;
     text-decoration:none}
   .pk-start{background:#0A2337; color:#fff; border-radius:6pt; padding:9pt 10pt;
@@ -7692,13 +7692,15 @@ function packHTML(){
         '<h3>' + esc(nm) +
           (b.c ? '<span class="pk-conf-tag ' + esc(b.c) + '">' + esc(b.c) + '</span>' : "") +
         '</h3>' +
+        /* first thing under the name: a long brief runs onto the next page,
+           and the way back has to be in sight where the reader lands */
+        '<p class="pk-backs">' + backLinks(nm) + '</p>' +
         body.map(function(x){
           return '<p><span class="pk-blab">' + esc(x[0]) + '</span>' + esc(x[1]) + '</p>';
         }).join("") +
         /* the operative line gets its own box: it is the one read walking in */
         (has(b.start) ? '<div class="pk-start"><span class="pk-blab">Where to start</span>' +
           esc(b.start) + '</div>' : "") +
-        '<p class="pk-backs">' + backLinks(nm) + '</p>' +
       '</div>';
     });
     h += '</section>';
