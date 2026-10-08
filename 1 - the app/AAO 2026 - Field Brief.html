@@ -1151,6 +1151,32 @@ body.packing #packout{display:block}
     color:#C41E23; text-decoration:none; flex:none}
   .pk-up::before{content:"\2039\00a0"}
 
+  /* ---------- the section header: the dividers' look, inside the column ---------- */
+  .pk-hero{background:#0A2337; color:#fff; border-radius:9pt; padding:8pt 12pt 10pt; margin:0 0 11pt;
+    background-image:linear-gradient(90deg,#E21E28,#932951,#273C8A,#337F9C,#3DB9AB);
+    background-size:100% 2.5pt; background-repeat:no-repeat; background-position:top;
+    background-color:#0A2337; break-inside:avoid; page-break-inside:avoid; break-after:avoid; page-break-after:avoid}
+  .pk-herotop{display:flex; align-items:center; gap:8pt; padding:3pt 0 6pt; margin-bottom:8pt;
+    border-bottom:1px solid #1E4368}
+  .pk-herotop img{height:4.6mm; display:block; flex:none}
+  .pk-herotop b{font-family:"Archivo",sans-serif; font-size:10pt; flex:none}
+  .pk-herowhere{flex:1; min-width:0; font-family:"Archivo",sans-serif; font-size:6.8pt; font-weight:600;
+    letter-spacing:.15em; text-transform:uppercase; color:#6E8BA6; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .pk-heroup{flex:none; font-family:"Archivo",sans-serif; font-size:7.5pt; font-weight:700; color:#0A2337;
+    background:#3DB9AB; border-radius:20pt; padding:2pt 8pt 2pt 7pt; text-decoration:none}
+  .pk-heroup::before{content:"\2039\00a0"}
+  .pk-herok{font-family:"Archivo",sans-serif; font-size:7.5pt; font-weight:600; letter-spacing:.17em;
+    text-transform:uppercase; color:#3DB9AB; margin:0 0 4pt}
+  .pk-heroh{font-family:"Archivo",sans-serif; font-size:20pt; font-weight:700; color:#fff;
+    margin:0; letter-spacing:-.7pt; line-height:1.05}
+  .pk-heros{font-size:9.5pt; color:#9DB8CF; margin:5pt 0 0; line-height:1.4}
+  .pk-herostats{display:flex; margin-top:10pt; border-top:1px solid #1E4368}
+  .pk-herostats div{flex:1; padding:7pt 0 0}
+  .pk-herostats div + div{border-left:1px solid #1E4368; padding-left:9pt}
+  .pk-herostats b{display:block; font-family:"Archivo",sans-serif; font-size:15pt; font-weight:700; color:#fff;
+    line-height:1; letter-spacing:-.4pt; font-variant-numeric:tabular-nums}
+  .pk-herostats span{display:block; font-size:7.5pt; color:#9DB8CF; margin-top:3pt}
+
   /* ---------- heads ---------- */
   .pk-kicker{font-family:"Archivo",sans-serif; font-size:7.5pt; font-weight:600;
     letter-spacing:.15em; text-transform:uppercase; color:#8195A7; margin:0 0 4pt;
@@ -1184,7 +1210,7 @@ body.packing #packout{display:block}
     break-after:avoid; page-break-after:avoid}
   .pk-chart{margin:0 0 14pt}
   .pk-cols{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; column-gap:6pt;
-    height:27mm; border-bottom:1px solid #B9C6D3; break-inside:avoid; page-break-inside:avoid}
+    height:22mm; border-bottom:1px solid #B9C6D3; break-inside:avoid; page-break-inside:avoid}
   .pk-col{display:flex; flex-direction:column; justify-content:flex-end; align-items:center;
     position:relative; min-width:0}
   .pk-col-val{font-family:"Archivo",sans-serif; font-size:9.5pt; font-weight:700; color:#0A2337;
@@ -1213,17 +1239,17 @@ body.packing #packout{display:block}
 
   /* ---------- contents ---------- */
   /* the tap target is the whole row, and on a phone that wants to be tall */
-  .pk-toc{display:block}
-  .pk-tocrow{display:grid; grid-template-columns:3pt 1fr auto; align-items:center;
-    column-gap:9pt; text-decoration:none; color:inherit; padding:7pt 10pt;
-    border:1px solid #DCE3EA; border-radius:7pt; margin-bottom:4pt; background:#fff;
-    break-inside:avoid; page-break-inside:avoid}
-  .pk-tocbar{grid-row:1 / 3; align-self:stretch; border-radius:2pt; background:#C41E23}
+  .pk-toc{display:block; counter-reset:toc; border-bottom:1px solid #DCE3EA}
+  .pk-tocrow{display:grid; grid-template-columns:20pt 1fr auto; align-items:center;
+    column-gap:8pt; text-decoration:none; color:inherit; padding:7pt 2pt;
+    border-top:1px solid #DCE3EA; break-inside:avoid; page-break-inside:avoid}
+  .pk-tocbar{grid-row:1 / 3; font-family:"IBM Plex Mono",monospace; font-size:8.5pt; color:#14776C}
+  .pk-tocbar::before{counter-increment:toc; content:counter(toc, decimal-leading-zero)}
   .pk-tocmain{font-family:"Archivo",sans-serif; font-weight:600; font-size:10pt; color:#0B2A4A;
     line-height:1.2}
   .pk-tocsub{grid-column:2; font-size:7.5pt; color:#8195A7; line-height:1.3}
   .pk-tocn{grid-column:3; grid-row:1 / 3; font-family:"Archivo",sans-serif; font-weight:700;
-    font-size:11pt; color:#C41E23; font-variant-numeric:tabular-nums}
+    font-size:11pt; color:#0A2337; font-variant-numeric:tabular-nums}
 
   a.pk-link{color:inherit; text-decoration:none}
 
@@ -1288,8 +1314,9 @@ body.packing #packout{display:block}
      page, so no page carries the tail of one company and the head of the
      next. A brief longer than a page still runs on (section 6 of the spec). */
   .pk-b + .pk-b{break-before:page; page-break-before:always}
-  .pk-b h3{font-family:"Archivo",sans-serif; font-size:13pt; font-weight:700; color:#0B2A4A;
-    margin:0 0 7pt; display:flex; align-items:baseline; gap:7pt; flex-wrap:wrap;
+  .pk-b h3{font-family:"Archivo",sans-serif; font-size:13pt; font-weight:700; color:#fff;
+    background:#0A2337; margin:-11pt -12pt 9pt -12pt; padding:10pt 12pt 9pt; border-radius:0 8pt 0 0;
+    display:flex; align-items:center; gap:7pt; flex-wrap:wrap;
     letter-spacing:-.4pt; line-height:1.15; break-after:avoid; page-break-after:avoid}
   .pk-b p{margin:0 0 7pt; font-size:10.2pt; line-height:1.5}
   .pk-blab{display:block; font-family:"Archivo",sans-serif; font-size:7pt; font-weight:600;
@@ -1324,6 +1351,9 @@ body.packing #packout{display:block}
   .pk-tier.t2{background:#273C8A}
   .pk-tier.t3{background:#A3B2C0}
   .pk-cov{margin:0 0 14pt}
+  /* last on the exec page: its margin plus the page padding tipped the sheet
+     over 200mm by a hair and pushed the final tier row onto a page of its own */
+  .pk-cov:last-child{margin-bottom:0}
   .pk-covhead{display:flex; align-items:flex-end; gap:9pt; margin:0 0 8pt}
   .pk-covn{font-family:"Archivo",sans-serif; font-size:26pt; font-weight:700; color:#0A2337;
     line-height:.9; letter-spacing:-.9pt; font-variant-numeric:tabular-nums}
@@ -1401,8 +1431,8 @@ body.packing #packout{display:block}
      scanning as a list */
   .pk-floor{display:block}
   .pk-fl{display:flex; align-items:baseline; justify-content:space-between; gap:8pt;
-    padding:5pt 10pt; border:1px solid #DCE3EA; border-radius:6pt; background:#fff;
-    margin-bottom:3pt; break-inside:avoid; page-break-inside:avoid}
+    padding:5pt 2pt; border-bottom:1px solid #E3E9EF; background:#fff;
+    break-inside:avoid; page-break-inside:avoid}
   .pk-flco{font-size:9pt; color:#8195A7; line-height:1.3}
   a.pk-flco{color:#0B2A4A; font-weight:600}
   .pk-booth{font-family:"IBM Plex Mono",monospace; font-size:8pt; color:#C41E23;
@@ -7344,6 +7374,25 @@ function packCo(name, cls){
   return '<a class="' + cls + ' pk-link" href="#b-' + slug(name) + '">' + inner + '</a>';
 }
 
+/* Every section opens on the same navy panel as the dividers, scaled to sit
+   inside the text column: a masthead with the Ora mark and a way back to the
+   contents, then the kicker, the title, a line of context and the section's
+   own figures. Pages read like screens of one app. */
+function packHero(o){
+  const stats = (o.stats || []).filter(function(x){ return x && x[0] !== undefined; });
+  return '<header class="pk-hero">' +
+    '<div class="pk-herotop">' +
+      (PK_MARK ? '<img src="' + PK_MARK + '" alt="Ora">' : '<b>Ora</b>') +
+      '<span class="pk-herowhere">' + esc(o.where || "") + '</span>' +
+      (o.back === false ? "" : '<a class="pk-heroup" href="#pk-contents">Contents</a>') +
+    '</div>' +
+    (has(o.kicker) ? '<p class="pk-herok">' + esc(o.kicker) + '</p>' : "") +
+    '<h2 class="pk-heroh">' + esc(o.title || "") + '</h2>' +
+    (has(o.sub) ? '<p class="pk-heros">' + esc(o.sub) + '</p>' : "") +
+    (stats.length ? '<div class="pk-herostats">' + stats.map(function(x){
+        return '<div><b>' + x[0] + '</b><span>' + esc(x[1]) + '</span></div>'; }).join("") + '</div>' : "") +
+  '</header>';
+}
 function packRule(where, back){
   return '<div class="pk-rule"><span class="pk-mark">Ora</span>' +
     '<span class="pk-where">' + esc(where) + '</span>' +
@@ -7548,10 +7597,12 @@ function packProgrammeFull(){
   return DAYS.filter(function(d){ return PROGRAMMES[d.key] && (PROGRAMMES[d.key].sessions || []).length; })
     .map(function(d){
       const P = PROGRAMMES[d.key];
-      return '<section class="pk-page" id="sec-prog-' + d.key + '">' + packRule(P.heading || "Programme") +
-        '<p class="pk-kicker">' + esc(d.long || d.label) + '</p>' +
-        '<h2 class="pk-h">Programme in full</h2>' +
-        '<p class="pk-dmeta">' + esc(P.heading || "") + '</p>' +
+      const more = P.sessions.filter(packSessHasMore);
+      return '<section class="pk-page" id="sec-prog-' + d.key + '">' +
+        packHero({where: P.heading || "Programme", kicker: d.long || d.label, title: "Programme in full",
+          sub: "Chairs, panels and every showcase line-up. Tap back to return to the day.",
+          stats: [[more.length, "sessions"],
+                  [more.reduce(function(n, s2){ return n + (s2.companies || []).length; }, 0), "companies on stage"]]}) +
         '<div class="pk-prog">' + P.sessions.filter(packSessHasMore).map(function(s2){ return packSession(d.key, s2); }).join("") +
         (has(P.foot) ? '<p class="pk-ch-foot">' + esc(P.foot) + '</p>' : "") + '</div>' +
       '</section>';
@@ -7590,6 +7641,7 @@ function packHTML(){
     {weekday: "long", day: "numeric", month: "long", year: "numeric"});
   const mark = document.querySelector(".masthead .wordmark") ||
                document.getElementById("splashmark");
+  PK_MARK = mark ? mark.getAttribute("src") : "";
 
   const briefNames = Object.keys(BRIEFS).sort(function(a, b){ return a.localeCompare(b); })
     .filter(function(n){
@@ -7668,12 +7720,10 @@ function packHTML(){
     [heldNoNext.length, "held with no next step", "The reason the meeting happened has not been banked."]
   ].filter(function(x){ return x[0] > 0; });
 
-  h += '<section class="pk-page" id="pk-exec">' + packRule(title, false) +
-    '<p class="pk-kicker">The week in one page</p>' +
-    '<h2 class="pk-h">How it sits</h2>' +
-    '<p class="pk-lede">' + all.length + ' meetings across ' + dayList.length + ' days' +
-      (peak ? ', weighted to ' + esc(peak.label || peak.long) : "") +
-      '. ' + briefNames.length + ' companies carry a brief.</p>';
+  h += '<section class="pk-page" id="pk-exec">' +
+    packHero({where: title, back: false, kicker: "The week in one page", title: "How it sits",
+      sub: all.length + ' meetings across ' + dayList.length + ' days' +
+        (peak ? ', weighted to ' + (peak.label || peak.long) : "") + '. ' + briefNames.length + ' companies carry a brief.'});
 
   /* the week's shape: one column per congress day, read left to right as the
      week runs. One hue stepped light to dark by magnitude, the count on top of
@@ -7693,7 +7743,7 @@ function packHTML(){
       };
       return '<div class="pk-col">' +
         '<b class="pk-col-val">' + n + '</b>' +
-        '<span class="pk-col-bar" style="height:calc((27mm - 16pt) * ' + (ht / 100).toFixed(3) + ');background:' + ramp(n / wkMax) + '"></span>' +
+        '<span class="pk-col-bar" style="height:calc((22mm - 16pt) * ' + (ht / 100).toFixed(3) + ');background:' + ramp(n / wkMax) + '"></span>' +
         '<span class="pk-col-lab">' + esc(d.label || d.short || d.key) + '</span>' +
       '</div>';
     }).join("") +
@@ -7723,7 +7773,9 @@ function packHTML(){
 
   /* the exec page ends here. What still needs doing and the contents start
      a page of their own, so neither is cut in half by the page edge. */
-  h += '</section><section class="pk-page" id="pk-contents">' + packRule(title, false) +
+  h += '</section><section class="pk-page" id="pk-contents">' +
+    packHero({where: title, back: false, kicker: "Contents", title: "Where to go",
+      sub: "Every part of the pack is a tap away. Each page has a way back here."}) +
     '<p class="pk-ch-title">What still needs doing</p>';
   h += flags.length
     ? '<div class="pk-flags">' + flags.map(function(f){
@@ -7763,7 +7815,6 @@ function packHTML(){
   '</div></section>';
 
   /* the sections this pack actually has, in order, with their own figures */
-  PK_MARK = mark ? mark.getAttribute("src") : "";
   const floorBriefed = ex.filter(function(e){ return BRIEF_BY_ID[slug(e.n)]; }).length;
   PK_ACTS = [{key: "week", title: "The week", href: dayList.length ? "#d-" + dayList[0].key : "#pk-contents",
               stats: [[all.length, "meetings"], [dayList.length, "days"],
@@ -7784,24 +7835,21 @@ function packHTML(){
   DAYS.forEach(function(day){
     const ms = by[day.key] || [];
     if(!ms.length) return;
+    const mt = ms.filter(function(m){ return has(m.company); });
     h += '<section class="pk-page" id="d-' + day.key + '">' +
-      packRule(day.long || day.label) +
-      '<div class="pk-dayhead">' +
-        '<div><p class="pk-kicker">' + esc(day.sub || "") + '</p>' +
-        '<h2 class="pk-h">' + esc(day.long || day.label) + '</h2>' +
-        '<p class="pk-dmeta">' + esc(day.venue || "") + '</p></div>' +
-        '<div class="pk-daynums"><span><b>' + ms.length + '</b>' +
-          (ms.length === 1 ? "meeting" : "meetings") + '</span>' +
-        '</div>' +
-      '</div>' +
+      packHero({where: day.event || title, kicker: day.sub, title: day.long || day.label, sub: day.venue,
+        stats: [[mt.length, mt.length === 1 ? "meeting" : "meetings"],
+                [mt.filter(function(m){ return tierOf(m) === 1; }).length, "must-take"],
+                [mt.filter(function(m){ return tierOf(m) === 3; }).length, "not covered"]]}) +
       packProgramme(day.key) +
       packTimeline(ms) +
     '</section>';
   });
   const un = by.unscheduled || [];
   if(un.length)
-    h += '<section class="pk-page" id="d-unscheduled">' + packRule("Not yet on a day") +
-      '<p class="pk-kicker">No date yet</p><h2 class="pk-h">Not yet on a day</h2>' +
+    h += '<section class="pk-page" id="d-unscheduled">' +
+      packHero({where: "Not yet on a day", kicker: "No date yet", title: "Not yet on a day",
+        stats: [[un.length, un.length === 1 ? "meeting" : "meetings"]]}) +
       packTimeline(un) + '</section>';
   h += packProgrammeFull();
 
@@ -7809,7 +7857,9 @@ function packHTML(){
   if(briefNames.length){
     h += packDivider("briefs", "Before the room",
       "What they do, where they stand, why it matters to us, and the line that opens it.");
-    h += '<section class="pk-page" id="sec-briefs">' + packRule("Company briefs");
+    h += '<section class="pk-page" id="sec-briefs">' +
+      packHero({where: "Company briefs", kicker: "Before the room", title: "Company briefs",
+        sub: "One company per page. Each opens with a way back to its meeting."});
     /* A PDF cannot know which page the reader came from, so each brief links
        back to the places that link to it: its meetings, else the day its
        company presents, else the contents. */
@@ -7864,9 +7914,10 @@ function packHTML(){
     h += packDivider("live", "Commercially",
       opps.length + " account" + (opps.length === 1 ? "" : "s") +
       " with a study to talk about going into the week.");
-    h += '<section class="pk-page" id="sec-opps">' + packRule("What is live") +
-      '<p class="pk-kicker">Opportunities</p><h2 class="pk-h">What is live</h2>' +
-      '<p class="pk-dmeta">Open coming in, or surfaced here. This is what the week is for.</p>' +
+    h += '<section class="pk-page" id="sec-opps">' +
+      packHero({where: "What is live", kicker: "Opportunities", title: "What is live",
+        sub: "Open coming in, or surfaced here. This is what the week is for.",
+        stats: [[opps.length, opps.length === 1 ? "study" : "studies"]]}) +
       '<div class="pk-opps">' + opps.map(function(o){
         return '<div class="pk-opp">' +
           '<div class="pk-oppco">' + packCo(o.co, "pk-link") +
@@ -7888,9 +7939,10 @@ function packHTML(){
   if(ex.length){
     h += packDivider("floor", "Exhibition",
       "Every stand worth walking to, with its booth number, and which ones we have already briefed.");
-    h += '<section class="pk-page" id="d-floor">' + packRule("The floor") +
-      '<p class="pk-kicker">Exhibition</p><h2 class="pk-h">On the floor</h2>' +
-      '<p class="pk-dmeta">A name in navy has a brief behind it — tap to read it.</p>' +
+    h += '<section class="pk-page" id="d-floor">' +
+      packHero({where: "The floor", kicker: "Exhibition", title: "On the floor",
+        sub: "A name in navy has a brief behind it. Tap it to read the brief.",
+        stats: [[ex.length, "stands"], [floorBriefed, "briefed"]]}) +
       '<div class="pk-floor">' +
       ex.map(function(e){
         return '<div class="pk-fl">' + packCo(e.n, "pk-flco") +

@@ -137,3 +137,14 @@ than a page. Run it after any change to the stylesheet or the generator.
 Then look at the rendered pages against
 `3 - sample export/what correct looks like/`. The harness catches what is
 measurable; your eye catches the rest.
+
+### Section headers carry the divider's look
+
+Every section opens on a navy header panel (`packHero()`), the dividers'
+design scaled to sit inside the text column: masthead with the Ora mark and a
+Contents button, kicker, title, a line of context and the section's figures
+between hairlines. It sits inside the column rather than bleeding to the page
+edge, so the overflow check still holds. Brief cards take a navy title band;
+the contents and the floor are hairline lists numbered like the divider index.
+Keep the exec page inside one sheet: its last block carries no bottom margin,
+because a fraction of a pixel over 200mm pushes a whole row onto a new page.
