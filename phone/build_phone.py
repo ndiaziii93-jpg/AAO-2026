@@ -37,7 +37,9 @@ rep("""  function readAll(){
       const got = {};
       await Promise.all(names.map(async function(n){
         const snap = await CLOUD.db.doc("fb/" + n).get();
-        if(snap.exists){ const v = snap.data(); if(v && v.items && typeof v.items === "object") got[n] = v.items; }
+        /* The store hands back records the page may not change in place, and
+           every edit writes into them; a copy is the phone's to change. */
+        if(snap.exists){ const v = snap.data(); if(v && v.items && typeof v.items === "object") got[n] = JSON.parse(JSON.stringify(v.items)); }
       }));
       if(Object.keys(got).length){
         Object.keys(cache).forEach(function(k){ delete cache[k]; });

@@ -1,5 +1,6 @@
 /* usage: serve the phone build as app.html inside a sandboxed frame.html on :8765, then
-   NODE_PATH=/opt/node22/lib/node_modules node phonetap.js <backup.json> */
+   NODE_PATH=/opt/node22/lib/node_modules node phonetap.js <backup.json>
+   The stand-in store hands back frozen records, as the real one does. */
 // Worst case for the iPhone: Safari sends no click at all for a tap. Every
 // control below has to answer to the finger alone.
 const fs=require('fs');const {chromium,devices}=require('playwright');
@@ -9,7 +10,7 @@ const store={};Object.keys(data).forEach(k=>store['fb/'+k]={items:data[k]});
 const ctx=await b.newContext({...devices['iPhone 13']});
 await ctx.exposeFunction('__dbGet',p=>store[p]===undefined?null:JSON.parse(JSON.stringify(store[p])));
 await ctx.exposeFunction('__dbSet',(p,d)=>{store[p]=d;return true;});
-await ctx.addInitScript(`window.claude={use:async function(n){ if(n==='db') return {doc:function(p){return {get:async function(){const v=await window.__dbGet(p);return {exists:v!=null,data:function(){return v;}};},set:async function(d){await window.__dbSet(p,d);}}}}; return null;}};
+await ctx.addInitScript(`window.claude={use:async function(n){ if(n==='db') return {doc:function(p){return {get:async function(){const v=await window.__dbGet(p);(function fz(o){if(o&&typeof o==="object"){Object.freeze(o);Object.values(o).forEach(fz);}})(v);return {exists:v!=null,data:function(){return v;}};},set:async function(d){await window.__dbSet(p,d);}}}}; return null;}};
  window.addEventListener('click',function(e){ if(e.isTrusted) e.stopImmediatePropagation(); },true);`);
 const pg=await ctx.newPage();const errs=[];pg.on('pageerror',e=>errs.push(e.message));
 await pg.goto('http://localhost:8765/frame.html');await pg.waitForTimeout(3500);
@@ -59,5 +60,10 @@ const nid=await f.evaluate(()=>Object.keys(state.meetings).find(k=>state.meeting
 ok('new meeting saved and editor closed', !!nid && await f.evaluate(()=>document.getElementById('editor').hidden));
 await pg.waitForTimeout(1800);
 ok('new meeting synced', !!(store['fb/meetings'].items[nid]));
+const er=f.locator('[data-row="mtg-'+id+'"]'); await er.scrollIntoViewIfNeeded();
+const ed=f.locator('[data-edit="'+id+'"]').first(); await ed.scrollIntoViewIfNeeded(); await ed.tap(); await pg.waitForTimeout(400);
+await f.locator('#editor input[name="topic"]').fill('Edited on the phone'); const sv=f.locator('#editor [data-save]'); await sv.scrollIntoViewIfNeeded(); await sv.tap(); await pg.waitForTimeout(500);
+ok('existing meeting edited', await f.evaluate(id=>state.meetings[id].topic,id)==='Edited on the phone');
+await pg.waitForTimeout(1800); ok('edit synced', store['fb/meetings'].items[id].topic==='Edited on the phone');
 console.log('errors:',errs.length?errs.slice(0,5):'none');
 await b.close();})();
