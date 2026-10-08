@@ -110,7 +110,7 @@ rep("""  else if(DIRTY)
     el.innerHTML = '<span class="dot local"></span> Saved on this laptop · ' +""")
 
 # 3. tell the phone edition apart at a glance
-rep('const BUILD = "07 Oct 2026";', 'const BUILD = "07 Oct 2026 \\u00b7 phone";')
+rep('const BUILD = "08 Oct 2026";', 'const BUILD = "08 Oct 2026 \\u00b7 phone";')
 
 # 4. the vendored spreadsheet reader's codepage tables hold U+FFFD on purpose
 #    (it tests charCodeAt === 65533). They all sit inside JS string literals,

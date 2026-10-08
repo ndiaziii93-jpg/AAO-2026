@@ -390,7 +390,7 @@ button.htile.lead:hover .htmore{color:var(--navy-ink)}
   appearance:none; background:transparent; border:1px solid var(--line-2); border-radius:5px;
   padding:3px 9px; font-size:11px; font-family:"Archivo"; font-weight:600; color:var(--ink-3); white-space:nowrap;
 }
-.tog:hover{border-color:var(--ink-3); color:var(--ink-2)}
+@media (hover:hover){ .tog:hover{border-color:var(--ink-3); color:var(--ink-2)} }
 .tog[aria-pressed="true"]{background:var(--green-fill); border-color:color-mix(in srgb, var(--green) 40%, transparent); color:var(--green)}
 .tog.opp[aria-pressed="true"]{background:var(--gold-fill); border-color:var(--gold-line); color:var(--gold)}
 .oppbar{display:flex; gap:9px; align-items:center; flex-wrap:wrap; padding:10px 12px; background:var(--gold-fill); border:1px solid var(--gold-line); border-radius:8px}
@@ -540,7 +540,7 @@ main{padding:26px 0 80px}
   appearance:none; background:var(--surface); border:1px solid var(--line-2); border-radius:6px;
   padding:4px 9px; font-size:11.5px; font-family:"Archivo"; font-weight:600; color:var(--ink-2);
 }
-.sbtn:hover{border-color:var(--ink-3); color:var(--ink)}
+@media (hover:hover){ .sbtn:hover{border-color:var(--ink-3); color:var(--ink)} }
 .sbtn[aria-pressed="true"]{background:var(--gold); border-color:var(--gold); color:#fff}
 :root[data-theme="dark"] .sbtn[aria-pressed="true"],
 :root:not([data-theme="light"]) .sbtn[aria-pressed="true"]{color:#12202B}
@@ -554,7 +554,7 @@ main{padding:26px 0 80px}
 .mcard{background:var(--surface); border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow); overflow:hidden}
 .mcard.pri{box-shadow:inset 3px 0 0 var(--gold), var(--shadow)}
 .mbtn{width:100%; text-align:left; background:none; border:0; padding:13px 15px; display:grid; grid-template-columns:76px 1fr auto; gap:12px; align-items:start}
-.mbtn:hover{background:var(--surface-2)}
+@media (hover:hover){ .mbtn:hover{background:var(--surface-2)} }
 .mtime{font-family:"IBM Plex Mono"; font-size:13px; font-variant-numeric:tabular-nums; color:var(--ink); padding-top:1px}
 .mtime small{display:block; font-size:10.5px; color:var(--ink-3)}
 .mco{font-family:"Archivo"; font-weight:600; font-size:15.5px; line-height:1.25}
@@ -599,7 +599,7 @@ main{padding:26px 0 80px}
 .empty p{margin:0 auto 14px; max-width:46ch; font-size:13.5px}
 
 .btn{appearance:none; border:1px solid var(--ink); background:var(--ink); color:var(--surface); border-radius:7px; padding:8px 15px; font-family:"Archivo"; font-weight:600; font-size:13px}
-.btn:hover{opacity:.88}
+@media (hover:hover){ .btn:hover{opacity:.88} }
 .btn.sec{background:transparent; color:var(--ink); border-color:var(--line-2)}
 .btn.sec:hover{border-color:var(--ink-3); opacity:1}
 .btn.sm{padding:5px 11px; font-size:12px}
@@ -684,7 +684,7 @@ label.f .hint{font-size:10.5px; color:var(--ink-3)}
 .lform label.f input{font-size:16px; padding:10px 11px}
 .lform .btn{padding:11px 16px; font-size:14px}
 button.chip{appearance:none; cursor:pointer; font-family:"Archivo"; line-height:inherit}
-button.chip:hover{filter:brightness(.96)}
+@media (hover:hover){ button.chip:hover{filter:brightness(.96)} }
 button.chip:active{transform:translateY(1px)}
 .linkbtn{appearance:none; background:none; border:0; padding:0; color:var(--navy-ink); text-decoration:underline;
   text-underline-offset:2px; font:inherit; cursor:pointer}
@@ -784,7 +784,7 @@ button.chip:active{transform:translateY(1px)}
      block in the card off the right edge where nothing could reach it. */
   white-space:normal; text-align:left; max-width:100%; overflow-wrap:anywhere;
 }
-.dchip:hover{border-color:var(--teal); color:var(--teal)}
+@media (hover:hover){ .dchip:hover{border-color:var(--teal); color:var(--teal)} }
 .dchip.on{background:var(--teal); border-color:var(--teal); color:#fff}
 :root[data-theme="dark"] .dchip.on, :root:not([data-theme="light"]) .dchip.on{color:#08211E}
 .dinput{background:var(--surface); border:1px solid var(--teal-line); border-radius:6px; padding:8px 10px; font-size:13.5px; width:100%}
@@ -2286,7 +2286,7 @@ const STORE_KEY = "aao2026-brief";
 /* Stamped at build time. Shown in the status line so that "is the copy I was
    just sent newer than the one I am typing into" is a question you can answer
    by looking, instead of by opening both. */
-const BUILD = "07 Oct 2026";
+const BUILD = "08 Oct 2026";
 const OWNER_NAME = "Norberto Diaz";
 /* how the author signs the pack, which is not the same as their role on the team list */
 const OWNER_TITLE = "Head of International Business Development";
@@ -2693,10 +2693,17 @@ function snapshotPanel(){
 }
 
 document.addEventListener("click", function(e){
-  const t = e.target.closest("[data-backup],[data-restore],[data-pack],[data-snapshot]");
+  const t = e.target.closest("[data-backup],[data-restore],[data-restoreyes],[data-pack],[data-snapshot]");
   if(!t) return;
   if(t.hasAttribute("data-backup"))  { saveBackup(); return; }
   if(t.hasAttribute("data-restore")) { openBackup(); return; }
+  if(t.hasAttribute("data-restoreyes") && state.pendingBackup){
+    db.importAll(state.pendingBackup);
+    state.pendingBackup = null;
+    STORE_BROKEN = false;
+    notice("Backup loaded.");
+    return;
+  }
   if(t.hasAttribute("data-pack"))    { exportPack(); return; }
   if(t.hasAttribute("data-snapshot")){ exportPack(); return; }
 });
@@ -2756,16 +2763,14 @@ function openBackup(){
         notice("That does not look like a backup of this brief.");
         return;
       }
-      /* Replacing everything is not a thing to do on a mis-click. */
+      /* Replacing everything is not a thing to do on a mis-click. Asked on the
+         page, not in a browser dialog: the phone edition runs in a frame where
+         confirm() answers "no" without showing anything. */
       const n = Object.keys(obj.data.meetings || {}).length;
-      if(!window.confirm("Replace everything on this laptop with the backup saved " +
-          new Date(obj.saved || Date.now()).toLocaleString() + "?\n\n" +
-          "It holds " + n + " meeting" + (n === 1 ? "" : "s") + ". " +
-          "What is here now will be gone.")) return;
-      db.importAll(obj.data);
-      STORE_BROKEN = false;
-      render();
-      notice("Backup loaded.");
+      state.pendingBackup = obj.data;
+      notice("Replace everything here with the backup saved " +
+        new Date(obj.saved || Date.now()).toLocaleString() + "? It holds " + n +
+        " meeting" + (n === 1 ? "" : "s") + ". What is here now will be gone.");
     };
     fr.readAsText(f);
   };
@@ -3280,7 +3285,8 @@ function render(){
   nb.hidden = !state.notice;
   nb.innerHTML = state.notice
     ? '<div class="wrap"><div class="noticebar"><span>' + esc(state.notice) + '</span>' +
-      '<button class="btn sec sm" data-dismiss="1">Dismiss</button></div></div>' : "";
+      (state.pendingBackup ? '<button class="btn sm danger" data-restoreyes="1">Replace</button>' : "") +
+      '<button class="btn sec sm" data-dismiss="1">' + (state.pendingBackup ? "Cancel" : "Dismiss") + '</button></div></div>' : "";
   if(state.tab === "exec") v.innerHTML = viewExec();
   else if(PROGRAMMES[state.tab]) v.innerHTML = viewProgramme(state.tab);
   else if(state.tab === "targets") v.innerHTML = viewTargets();
@@ -6970,7 +6976,7 @@ document.addEventListener("click", e => {
     pi.status = parts[1]; savePI(pi); return;
   }
   if(t.dataset.accept){ acceptProposal(t.dataset.accept); return; }
-  if(t.hasAttribute("data-dismiss")){ state.notice = ""; render(); return; }
+  if(t.hasAttribute("data-dismiss")){ state.notice = ""; state.pendingBackup = null; render(); return; }
   if(t.dataset.logn){ state.logN = +t.dataset.logn; openLogPanel(); return; }
   if(t.dataset.brief){ openBriefEditor(t.dataset.brief); return; }
   if(t.dataset.carrydbf){ carryDebrief(t.dataset.carrydbf); return; }
@@ -7170,6 +7176,19 @@ document.addEventListener("click", e => {
     return;
   }
 });
+/* The notes box is otherwise saved when it is left, and an iPhone that is
+   locked, or switched to another app, mid-sentence never leaves it. */
+let DBF_TYPING = null;
+document.addEventListener("input", function(e){
+  const el = e.target;
+  if(!el || !el.matches || !el.matches("[data-dbfin]")) return;
+  clearTimeout(DBF_TYPING);
+  DBF_TYPING = setTimeout(function(){
+    const parts = el.dataset.dbfin.split("|");
+    const patch = {}; patch[parts[1]] = el.value;
+    saveDebrief(parts[0], patch, true);
+  }, 700);
+});
 document.addEventListener("change", e => {
   if(e.target.matches('input[name="oraRel"]')){
     const w = document.getElementById("piStudyWrap");
@@ -7193,6 +7212,7 @@ document.addEventListener("change", e => {
     saveMet(e.target.dataset.dbfmetother, {other: e.target.value});
   }
   if(e.target.matches("[data-dbfin]")){
+    clearTimeout(DBF_TYPING);
     const parts = e.target.dataset.dbfin.split("|");
     const patch = {}; patch[parts[1]] = e.target.value;
     saveDebrief(parts[0], patch, true);
@@ -7247,13 +7267,48 @@ setInterval(function(){
   el.textContent = t12(hhmm(now));
   if(NOW_NEXT !== null && now >= NOW_NEXT){
     const ed = document.getElementById("editor");
-    if(ed && ed.hidden) render();
+    if(ed && ed.hidden && !typingInView()) render();
   }
 }, 30000);
 /* Escape already closed these; the backdrop should too. A press that starts
    inside the sheet and ends on the backdrop is a drag — selecting text, using
    a slider — not a click out, so the press has to begin on the backdrop for
    this to count. */
+/* iPhone Safari decides for itself whether a tap becomes a click: it holds
+   the click back while it works out whether the tap was a hover, a zoom or the
+   end of a scroll, and inside the claude.ai frame it can drop it altogether,
+   which reads as a button that does nothing. So a tap on a button is acted on
+   when the finger lifts, and the click Safari might or might not send after it
+   is cancelled. A finger that moved is a scroll and is left alone. */
+let TAP = null;
+document.addEventListener("touchstart", function(e){
+  const b = e.touches.length === 1 && e.target.closest ? e.target.closest("button") : null;
+  TAP = b ? {b: b, x: e.touches[0].clientX, y: e.touches[0].clientY} : null;
+}, {passive: true});
+document.addEventListener("touchmove", function(e){
+  if(TAP && (Math.abs(e.touches[0].clientX - TAP.x) > 10 || Math.abs(e.touches[0].clientY - TAP.y) > 10)) TAP = null;
+}, {passive: true});
+document.addEventListener("touchcancel", function(){ TAP = null; }, {passive: true});
+document.addEventListener("touchend", function(e){
+  const tap = TAP; TAP = null;
+  if(!tap || tap.b.disabled) return;
+  e.preventDefault();
+  let b = tap.b;
+  /* A box being typed in is left first, as a mouse click would, so its
+     text is saved before the button acts. Saving can redraw the page; the
+     button is then found again by what it does. */
+  const a = document.activeElement;
+  if(a && a !== b && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) a.blur();
+  if(!b.isConnected){
+    const data = Array.prototype.filter.call(b.attributes, function(x){ return x.name.indexOf("data-") === 0; });
+    b = data.length ? document.querySelector("button" + data.map(function(x){
+      return "[" + x.name + '="' + CSS.escape(x.value) + '"]';
+    }).join("")) : null;
+    if(!b) return;
+  }
+  b.click();
+}, {passive: false});
+
 let OVL_DOWN = false;
 document.addEventListener("mousedown", function(e){
   OVL_DOWN = !!(e.target && e.target.id === "editor");
