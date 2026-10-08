@@ -3319,6 +3319,25 @@ function dayMeetings(key){
   return all.filter(m => m.day === key)
     .sort((a,b) => (a.time||"99:99").localeCompare(b.time||"99:99"));
 }
+/* A conversation caught on the floor has no card and so no slot, but it
+   happened on a day and is a meeting on that day: the tab badge, the day's
+   "Our meetings" and every per-day chart count it beside the cards. The day is
+   noted when "Spoke with them" is tapped; before that was noted, a company
+   that presents on one congress day only is taken to have been met there. */
+function floorDayOf(id){
+  const t = state.targets[id] || {};
+  if(t.day && DAYS.some(function(d){ return d.key === t.day; })) return t.day;
+  const c = COMPANIES.filter(function(x){ return x.id === id; })[0];
+  const days = c ? c.slots.map(function(s){ return s.dayKey; })
+                     .filter(function(k, i, a){ return k && a.indexOf(k) === i; }) : [];
+  return days.length === 1 ? days[0] : "";
+}
+function dayFloor(key){
+  return Object.keys(state.targets).filter(function(id){
+    return accountHeld(id) && !accountMeetings(id).length && floorDayOf(id) === key;
+  });
+}
+function dayCount(key){ return dayMeetings(key).length + dayFloor(key).length; }
 function allMeetings(){
   return Object.keys(state.meetings).map(function(k){ return state.meetings[k]; })
     .concat(Object.keys(state.proposed).map(function(k){ return state.proposed[k]; }));
@@ -3328,7 +3347,7 @@ function renderTabs(){
   const c = counts();
   const ex = '<button class="tab exec" role="tab" aria-selected="' + (state.tab==="exec") + '" data-tab="exec">Overview</button>';
   const tabs = DAYS.map(d => {
-    const n = dayMeetings(d.key).length;
+    const n = dayCount(d.key);
     const badge = n ? '<span class="n">' + n + '</span>' : "";
     return '<button class="tab" role="tab" aria-selected="' + (state.tab===d.key) + '" data-tab="' + d.key + '">' +
       esc(d.label) + badge + '</button>';
@@ -4122,12 +4141,12 @@ function viewExec(){
       '</div></div>'
     : "";
 
-  const maxDay = Math.max(1, ...DAYS.map(d => dayMeetings(d.key).length));
+  const maxDay = Math.max(1, ...DAYS.map(d => dayCount(d.key)));
   const shape =
   '<div class="shapewrap">' +
     '<p class="eyebrow">Shape of the week</p>' +
     '<div class="shape">' + DAYS.map(d => {
-      const n = dayMeetings(d.key).length;
+      const n = dayCount(d.key);
       return '<div class="col"><div class="num">' + (n||"") + '</div>' +
         '<div class="bar' + (n?" has":"") + '" style="height:' + (n ? Math.max(8, n/maxDay*38) : 3) + 'px"></div>' +
         '<div class="lab">' + esc(d.label) + '</div></div>';
@@ -5482,7 +5501,8 @@ function viewProgramme(key){
   const openMin = sessions.filter(s => s.kind === "open").reduce((a,s) => a + dur(s), 0);
   const ms = dayMeetings(key);
   const stats = [
-    {v:ms.length, k:"Our meetings", accent:true},
+    {v:ms.length + dayFloor(key).length, accent:true,
+     k:dayFloor(key).length ? "Our meetings \u00b7 " + ms.length + " booked, " + dayFloor(key).length + " on the floor" : "Our meetings"},
     (cos.length ? {v:cos.length, k:"Companies on this agenda"}
                 : {v:"\u2014", k:"Company list not published"}),
     {v:panels, k:panels === 1 ? "Panel on the agenda" : "Panels on the agenda"},
@@ -6178,7 +6198,8 @@ function viewDay(key){
   const byFormat = f => ms.filter(m => m.format === f).length;
   const ready = ms.filter(function(m){ return debriefLogged(debriefOf(m.id)); }).length;
   const stats = '<div class="statstrip">' +
-    '<div class="stat"><div class="v">' + ms.length + '</div><div class="k">Meetings</div></div>' +
+    '<div class="stat"><div class="v">' + (ms.length + dayFloor(key).length) + '</div><div class="k">Meetings' +
+      (dayFloor(key).length ? ' &middot; ' + dayFloor(key).length + ' on the floor' : "") + '</div></div>' +
     '<div class="stat"><div class="v">' + byFormat("formal") + ' / ' + byFormat("informal") + ' / ' + byFormat("meal") + '</div><div class="k">Formal / informal / meal</div></div>' +
     '<div class="stat accent"><div class="v">' + ready + '</div><div class="k">Debriefed</div></div>' +
     '<div class="stat"><div class="v">' + ms.filter(m => m.confirmed === false).length + '</div><div class="k">Unconfirmed</div></div>' +
@@ -7096,7 +7117,13 @@ document.addEventListener("click", e => {
     const id = t.dataset.accheld;
     const nm = (state.targets[id] || {}).name ||
       (COMPANIES.filter(function(c){ return c.id === id; })[0] || {}).name || "";
-    saveAccountFlag(id, nm, {held: !accountHeld(id)});
+    const patch = {held: !accountHeld(id)};
+    if(patch.held && !(state.targets[id] || {}).day){
+      const onDay = DAYS.some(function(d){ return d.key === state.tab; }) ? state.tab
+                  : (DAYS.some(function(d){ return isToday(d.key); }) ? todayKey() : floorDayOf(id));
+      if(onDay) patch.day = onDay;
+    }
+    saveAccountFlag(id, nm, patch);
     refreshGap();
     return;
   }
@@ -7763,7 +7790,7 @@ function packHTML(){
 
   /* ================= the one page a VP reads ================= */
   const peak = dayList.slice().sort(function(a, b){
-    return (by[b.key] || []).length - (by[a.key] || []).length; })[0];
+    return dayCount(b.key) - dayCount(a.key); })[0];
   const noBrief = all.filter(function(m){ return !BRIEF_BY_ID[slug(m.company)]; });
   const noObj = all.filter(function(m){ return !has(m.objective); });
   const heldNoNote = all.filter(function(m){ return wasHeld(m) && !has(debriefOf(m.id).notes); });
@@ -7789,17 +7816,18 @@ function packHTML(){
 
   h += '<section class="pk-page" id="pk-exec">' +
     packHero({where: title, back: false, kicker: "The week in one page", title: "How it sits",
-      sub: all.length + ' meetings across ' + dayList.length + ' days' +
+      sub: (all.length + DAYS.reduce(function(a, d){ return a + dayFloor(d.key).length; }, 0)) +
+        ' meetings across ' + DAYS.filter(function(d){ return dayCount(d.key); }).length + ' days' +
         (peak ? ', weighted to ' + (peak.label || peak.long) : "") + '. ' + briefNames.length + ' companies carry a brief.'});
 
   /* the week's shape: one column per congress day, read left to right as the
      week runs. One hue stepped light to dark by magnitude, the count on top of
      each column. A day with nothing booked keeps its slot at zero, so a quiet
      day reads as quiet rather than vanishing. */
-  const wkMax = Math.max(1, ...DAYS.map(function(d){ return (by[d.key] || []).length; }));
+  const wkMax = Math.max(1, ...DAYS.map(function(d){ return dayCount(d.key); }));
   h += '<p class="pk-ch-title">Meetings per day</p><div class="pk-chart"><div class="pk-cols">' +
     DAYS.map(function(d){
-      const n = (by[d.key] || []).length;
+      const n = dayCount(d.key);
       const ht = n ? Math.max(4, Math.round(n / wkMax * 100)) : 0;
       /* one sequential ramp, Ora teal at the quietest day to Ora blue at the
          busiest: colour that still only ever says "more", never "which" */
@@ -7814,7 +7842,7 @@ function packHTML(){
         '<span class="pk-col-lab">' + esc(d.label || d.short || d.key) + '</span>' +
       '</div>';
     }).join("") +
-    '</div><p class="pk-ch-foot">Column height is meetings booked that day.</p></div>';
+    '</div><p class="pk-ch-foot">Column height is meetings that day: booked, and caught on the floor.</p></div>';
 
   /* how the week divides by tier, and what the tiers mean - a chip nobody
      can decode is worse than no chip */
