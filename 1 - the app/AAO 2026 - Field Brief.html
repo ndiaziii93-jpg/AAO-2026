@@ -1091,14 +1091,36 @@ body.packing #packout{display:block}
   /* ---------- act dividers ---------- */
   .pk-div{background:#0A2337; color:#fff; min-height:200mm; position:relative;
     page-break-after:always; padding:0}
-  .pk-divin{position:absolute; left:10mm; right:10mm; bottom:22mm}
-  .pk-divn{font-family:"Archivo",sans-serif; font-size:56pt; font-weight:700; line-height:.8;
-    color:#15385A; margin:0 0 8pt; letter-spacing:-2.4pt}
+  .pk-divtop{position:absolute; top:11mm; left:10mm; right:10mm; display:flex;
+    align-items:center; justify-content:space-between; padding-bottom:6pt; border-bottom:1px solid #1E4368}
+  .pk-divtop img{height:6mm; display:block}
+  .pk-divtop b{font-family:"Archivo",sans-serif; font-size:12pt}
+  .pk-divtop span{font-family:"Archivo",sans-serif; font-size:7pt; font-weight:600;
+    letter-spacing:.16em; text-transform:uppercase; color:#6E8BA6}
+  .pk-divin{position:absolute; left:10mm; right:10mm; top:46mm}
+  .pk-divn{font-family:"Archivo",sans-serif; font-size:60pt; font-weight:700; line-height:.8;
+    color:#3DB9AB; margin:0 0 12pt; letter-spacing:-2.4pt; font-variant-numeric:tabular-nums}
   .pk-diveyebrow{font-family:"Archivo",sans-serif; font-size:7.5pt; font-weight:600;
-    letter-spacing:.18em; text-transform:uppercase; color:#3DB9AB; margin:0 0 6pt}
-  .pk-divh{font-family:"Archivo",sans-serif; font-size:21pt; font-weight:700; color:#fff;
-    margin:0 0 8pt; letter-spacing:-.7pt; line-height:1}
-  .pk-divblurb{font-size:10.5pt; color:#9DB8CF; margin:0; line-height:1.45}
+    letter-spacing:.18em; text-transform:uppercase; color:#9DB8CF; margin:0 0 6pt}
+  .pk-divh{font-family:"Archivo",sans-serif; font-size:26pt; font-weight:700; color:#fff;
+    margin:0 0 9pt; letter-spacing:-.9pt; line-height:1}
+  .pk-divblurb{font-size:10.5pt; color:#9DB8CF; margin:0; line-height:1.45; max-width:88mm}
+  .pk-divstats{display:flex; margin-top:14pt; border-top:1px solid #1E4368; border-bottom:1px solid #1E4368}
+  .pk-divstats div{flex:1; padding:8pt 0}
+  .pk-divstats div + div{border-left:1px solid #1E4368; padding-left:9pt}
+  .pk-divstats b{display:block; font-family:"Archivo",sans-serif; font-size:16pt; font-weight:700;
+    color:#fff; line-height:1; font-variant-numeric:tabular-nums; letter-spacing:-.4pt}
+  .pk-divstats span{display:block; font-size:7.5pt; color:#9DB8CF; margin-top:3pt}
+  .pk-dividx{position:absolute; left:10mm; right:10mm; bottom:19mm}
+  .pk-dividx p{font-family:"Archivo",sans-serif; font-size:7pt; font-weight:600; letter-spacing:.16em;
+    text-transform:uppercase; color:#6E8BA6; margin:0 0 4pt}
+  .pk-divrow{display:flex; align-items:baseline; gap:9pt; padding:4pt 0; border-top:1px solid #15385A;
+    text-decoration:none; color:#6E8BA6; font-size:9pt}
+  .pk-divrn{font-family:"IBM Plex Mono",monospace; font-size:8pt; width:14pt}
+  .pk-divrow.cur{color:#fff; font-weight:600}
+  .pk-divrow.cur .pk-divrn{color:#3DB9AB}
+  .pk-divfoot{position:absolute; left:10mm; right:10mm; bottom:9mm; margin:0;
+    font-size:7pt; color:#6E8BA6; letter-spacing:.04em}
 
   /* ---------- running head ---------- */
   .pk-rule{display:flex; align-items:baseline; gap:7pt; border-bottom:1px solid #DCE3EA;
@@ -7383,14 +7405,35 @@ function openMins(ms){
   return open;
 }
 
-/* a full-bleed divider, so the reader always knows which act they are in */
-function packDivider(n, kicker, title, blurb){
+/* A full-bleed section opener, laid out like a report's: masthead, a numbered
+   title with the section's own figures, and an index of every section with
+   this one lit, each entry a link. Sections number themselves from PK_ACTS,
+   which packHTML fills, so a pack without "What is live" never skips a number. */
+let PK_ACTS = [], PK_MARK = "";
+function packDivider(key, kicker, blurb){
+  const i = PK_ACTS.map(function(a){ return a.key; }).indexOf(key);
+  const act = PK_ACTS[i] || {title: kicker, stats: []};
+  const num = function(k){ return (k < 9 ? "0" : "") + (k + 1); };
   return '<section class="pk-div">' +
     '<div class="pk-grad"></div>' +
-    '<div class="pk-divin"><p class="pk-divn">' + n + '</p>' +
+    '<div class="pk-divtop">' +
+      (PK_MARK ? '<img src="' + PK_MARK + '" alt="Ora">' : '<b>Ora</b>') +
+      '<span>AAO 2026 · Field Brief</span></div>' +
+    '<div class="pk-divin">' +
+      '<p class="pk-divn">' + num(Math.max(0, i)) + '</p>' +
       '<p class="pk-diveyebrow">' + esc(kicker) + '</p>' +
-      '<h2 class="pk-divh">' + esc(title) + '</h2>' +
-      '<p class="pk-divblurb">' + esc(blurb) + '</p></div>' +
+      '<h2 class="pk-divh">' + esc(act.title) + '</h2>' +
+      '<p class="pk-divblurb">' + esc(blurb) + '</p>' +
+      (act.stats.length ? '<div class="pk-divstats">' + act.stats.map(function(x){
+          return '<div><b>' + x[0] + '</b><span>' + esc(x[1]) + '</span></div>'; }).join("") + '</div>' : "") +
+    '</div>' +
+    '<div class="pk-dividx"><p>In this pack</p>' +
+      PK_ACTS.map(function(a, k){
+        return '<a class="pk-divrow' + (k === i ? " cur" : "") + '" href="' + a.href + '">' +
+          '<span class="pk-divrn">' + num(k) + '</span><span>' + esc(a.title) + '</span></a>';
+      }).join("") +
+    '</div>' +
+    '<p class="pk-divfoot">Ora internal · confidential</p>' +
   '</section>';
 }
 
@@ -7668,8 +7711,23 @@ function packHTML(){
       '<span class="pk-tocn">' + ex.length + '</span></a>' : "") +
   '</div></section>';
 
+  /* the sections this pack actually has, in order, with their own figures */
+  PK_MARK = mark ? mark.getAttribute("src") : "";
+  const floorBriefed = ex.filter(function(e){ return BRIEF_BY_ID[slug(e.n)]; }).length;
+  PK_ACTS = [{key: "week", title: "The week", href: dayList.length ? "#d-" + dayList[0].key : "#pk-contents",
+              stats: [[all.length, "meetings"], [dayList.length, "days"],
+                      [all.filter(function(m){ return tierOf(m) === 1; }).length, "must-take"]]}];
+  if(briefNames.length) PK_ACTS.push({key: "briefs", title: "Company briefs", href: "#sec-briefs",
+    stats: [[briefNames.length, "companies"],
+            [briefNames.filter(function(n){ return (BRIEFS[n] || {}).c === "high"; }).length, "verified"],
+            [briefNames.filter(function(n){ return (BRIEFS[n] || {}).c !== "high"; }).length, "partly verified"]]});
+  if(opps.length) PK_ACTS.push({key: "live", title: "What is live", href: "#sec-opps",
+    stats: [[opps.length, opps.length === 1 ? "study" : "studies"]]});
+  if(ex.length) PK_ACTS.push({key: "floor", title: "The floor", href: "#d-floor",
+    stats: [[ex.length, "stands"], [floorBriefed, "briefed"]]});
+
   /* ================= act one: the week ================= */
-  h += packDivider("01", "The schedule", "The week",
+  h += packDivider("week", "The schedule",
     "Every meeting, in order, with who is in the room and what we want out of it.");
 
   DAYS.forEach(function(day){
@@ -7698,7 +7756,7 @@ function packHTML(){
 
   /* ================= act two: the briefs ================= */
   if(briefNames.length){
-    h += packDivider("02", "Before the room", "Company briefs",
+    h += packDivider("briefs", "Before the room",
       "What they do, where they stand, why it matters to us, and the line that opens it.");
     h += '<section class="pk-page" id="sec-briefs">' + packRule("Company briefs");
     /* A PDF cannot know which page the reader came from, so each brief links
@@ -7752,7 +7810,7 @@ function packHTML(){
 
   /* ---- what is live commercially: the page a VP turns to first ---- */
   if(opps.length){
-    h += packDivider("03", "Commercially", "What is live",
+    h += packDivider("live", "Commercially",
       opps.length + " account" + (opps.length === 1 ? "" : "s") +
       " with a study to talk about going into the week.");
     h += '<section class="pk-page" id="sec-opps">' + packRule("What is live") +
@@ -7777,9 +7835,8 @@ function packHTML(){
 
   /* ================= act three: the floor ================= */
   if(ex.length){
-    const briefedOnFloor = ex.filter(function(e){ return BRIEF_BY_ID[slug(e.n)]; }).length;
-    h += packDivider("04", "Exhibition", "The floor",
-      ex.length + " stands. " + briefedOnFloor + " of them already carry a brief.");
+    h += packDivider("floor", "Exhibition",
+      "Every stand worth walking to, with its booth number, and which ones we have already briefed.");
     h += '<section class="pk-page" id="d-floor">' + packRule("The floor") +
       '<p class="pk-kicker">Exhibition</p><h2 class="pk-h">On the floor</h2>' +
       '<p class="pk-dmeta">A name in navy has a brief behind it — tap to read it.</p>' +
