@@ -507,7 +507,7 @@ main{padding:26px 0 80px}
 .cbtn:hover{background:var(--surface-2)}
 .cname{font-family:"Archivo"; font-weight:600; font-size:13.5px; line-height:1.28}
 .cslot{font-family:"IBM Plex Mono"; font-size:11px; color:var(--ink-3); margin-top:3px}
-.cbody{border-top:1px solid var(--line); padding:14px; display:grid; gap:13px; background:var(--surface-2)}
+.cbody{border-top:1px solid var(--line); padding:14px; display:grid; grid-template-columns:minmax(0,1fr); gap:13px; background:var(--surface-2)}
 .ccard.open{grid-column:1 / -1}
 
 /* company brief */
@@ -837,6 +837,18 @@ body{overflow-x:clip}
 .orow.held{background:var(--teal-fill)}
 .orow-when{font-family:"IBM Plex Mono"; font-size:11.5px; color:var(--ink-2); min-width:104px; flex:none}
 @media (max-width:760px){ .orow-when{min-width:0; width:100%} .orow .kindsel{flex:1} }
+.orow-when.none{font-family:inherit; font-size:12.5px; color:var(--ink-3)}
+/* A company card sits three boxes deep inside the timeline; on a phone every
+   pixel of padding there comes out of the buttons, so the boxes give it back
+   and the label column folds above its value. */
+@media (max-width:760px){
+  .sbody{padding:0 10px 12px}
+  .cbody{padding:12px 11px}
+  .ccard .kv{grid-template-columns:minmax(0,1fr); gap:2px}
+  .ccard .kv dt{padding-top:7px}
+  .ccard .orow .kindsel{flex:1 1 100%}
+  .ccard .orow .kbtn{flex:1 1 0; text-align:center}
+}
 
 /* Salesforce handover fields — one copy button per thing the rep types */
 .sffield{margin-top:9px}
@@ -6477,7 +6489,7 @@ function originRows(accId, accName){
           (held ? "&#10003; Spoke with them" : "Spoke with them?") + '</button>';
     return '<div><p class="eyebrow" style="margin-bottom:6px">Did we get to them</p><div class="orows">' +
       '<div class="orow' + (held ? " held" : "") + '">' +
-        '<span class="orow-when">No meeting booked</span>' + inner +
+        '<span class="orow-when none">No meeting booked</span>' + inner +
       '</div></div>' +
       '<p class="dhint" style="margin:5px 0 0">For the ones you cornered on the floor &mdash; no card needed, it still counts.</p></div>';
   }
