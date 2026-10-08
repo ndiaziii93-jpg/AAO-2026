@@ -559,6 +559,20 @@ main{padding:26px 0 80px}
 .mtime small{display:block; font-size:10.5px; color:var(--ink-3)}
 .mco{font-family:"Archivo"; font-weight:600; font-size:15.5px; line-height:1.25}
 .mobj{font-size:13.5px; color:var(--ink-2); margin-top:5px}
+.mtopic{font-weight:600; color:var(--ink)}
+/* the BD lead's voice, opened: topic, objective and background as one block */
+.bdv{background:var(--navy); color:var(--navy-ink); border-radius:10px; padding:14px 16px 12px;
+  border-left:3px solid var(--teal)}
+.bdv-k{font-family:"Archivo"; font-size:10px; font-weight:600; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--navy-ink-2); margin:0 0 6px}
+.bdv-t{font-family:"Archivo"; font-size:16px; font-weight:700; line-height:1.3; margin:0 0 10px; color:var(--navy-ink)}
+.bdv-row{display:grid; grid-template-columns:82px minmax(0,1fr); gap:10px; padding:8px 0;
+  border-top:1px solid var(--navy-line)}
+.bdv-l{font-family:"Archivo"; font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--navy-ink-2); padding-top:3px}
+.bdv-row p{margin:0; font-size:14px; line-height:1.55; max-width:62ch; color:var(--navy-ink)}
+.bdv .bdv-gap{color:var(--navy-ink-2); font-style:italic; font-size:13px; margin:0}
+@media (max-width:420px){ .bdv-row{grid-template-columns:1fr; gap:3px} }
 .mbody{border-top:1px solid var(--line); padding:14px 15px 16px; display:grid; gap:14px; background:var(--surface-2); min-width:0}
 .mbody > *{min-width:0}
 .block h4{font-size:10.5px; font-family:"Archivo"; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); margin-bottom:5px}
@@ -6169,8 +6183,7 @@ function meetingCard(m, inTimeline){
     originOf(m) === "hunted" ? '<span class="chip teal">Tracked down</span>' : "",
     sfApproved(m) ? '<span class="chip gold">Approved for SF</span>' : "",
     (!m.proposed && debriefLogged(debriefOf(m.id))) ? '<span class="chip teal">Debriefed</span>' : "",
-    stage,
-    has(m.topic) ? '<span style="color:var(--ink-2)">' + esc(m.topic) + '</span>' : ""
+    stage
   ].filter(Boolean).join("");
 
   const head = '<button class="mbtn' + (inTimeline ? " intl" : "") + '" data-row="mtg-' + m.id + '" aria-expanded="' + open + '">' +
@@ -6180,7 +6193,10 @@ function meetingCard(m, inTimeline){
     '<span><span class="mco">' + (m.ora !== false ? ORA + " " : "") + esc(m.company || "Untitled meeting") + '</span>' +
       (editorsOn(m.id).length ? '<span class="chip amber" style="margin-top:4px">&#9998; ' + esc(editorsOn(m.id).join(", ")) + ' editing</span>' : '') +
       '<span class="smeta">' + meta + '</span>' +
-      '<span class="mobj">' + (has(m.objective) ? esc(m.objective) : gap("Objective — not yet set")) + '</span></span>' +
+      /* collapsed, the card says why the meeting exists in one line: the topic,
+         or the objective where no topic was written */
+      '<span class="mobj">' + (has(m.topic) ? '<b class="mtopic">' + esc(m.topic) + '</b>'
+        : has(m.objective) ? esc(m.objective) : gap("Topic — not yet set")) + '</span></span>' +
     '<span style="display:flex;align-items:center;gap:9px;padding-top:4px">' +
       oraStack(m) +
       '<span class="dot" style="background:' + dotColor + '" title="' + dotTitle + '"></span>' +
@@ -6191,6 +6207,17 @@ function meetingCard(m, inTimeline){
   if(!open) return '<div class="mcard' + (m.priority === "high" ? " pri" : "") + '">' + head + '</div>';
 
   const blocks = [];
+  /* Topic, objective and background are one thing to the reader: why we are in
+     this room. Opened, the card leads with all three together, in the dark
+     box, so the BD lead's intent is the first thing anyone sees. */
+  blocks.push('<div class="bdv">' +
+    '<p class="bdv-k">Why we\u2019re in the room</p>' +
+    (has(m.topic) ? '<p class="bdv-t">' + esc(m.topic) + '</p>' : '<p class="bdv-gap">Topic not set</p>') +
+    '<div class="bdv-row"><span class="bdv-l">Objective</span>' +
+      (has(m.objective) ? '<p>' + esc(m.objective) + '</p>' : '<p class="bdv-gap">Not set yet. What has to be true when we walk out?</p>') + '</div>' +
+    '<div class="bdv-row"><span class="bdv-l">Background</span>' +
+      (has(m.background) ? '<p>' + esc(m.background) + '</p>' : '<p class="bdv-gap">Not captured yet</p>') + '</div>' +
+  '</div>');
   const cbr = has(m.company) ? BRIEF_BY_ID[slug(m.company)] : null;
   if(cbr){
     blocks.push('<div class="brief compact">' +
@@ -6233,8 +6260,6 @@ function meetingCard(m, inTimeline){
     '</div><p class="dhint" style="margin:7px 0 0">One meeting, counted once \u2014 and it shows as reached ' +
       'on each of their company cards.</p>'));
   }
-  if(has(m.background)) blocks.push(block("Background", '<p>' + esc(m.background) + '</p>'));
-  else blocks.push('<div class="block">' + gap("Background — not yet captured") + '</div>');
 
   if(has(m.relStatus) || has(m.lastContact) || has(m.history)){
     blocks.push(block("Relationship", '<dl class="kv">' +
