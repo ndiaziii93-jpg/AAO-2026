@@ -51,8 +51,10 @@ Those honour `@page size`. Safari may not.
 
 `#E21E28 → #932951 → #273C8A → #337F9C → #3DB9AB`. It appears as the bar across
 divider pages and the spine on a brief card. It must never encode a value.
-Bars in the "meetings per day" chart are **one hue stepped light to dark by
-magnitude**, direct-labelled. Colouring a bar by its rank is how a chart starts
+Bars in the "meetings per day" chart are **one sequential ramp stepped by
+magnitude** (Ora teal for the quietest day through to Ora blue for the busiest),
+direct-labelled. The ramp borrows brand colours but runs one way, so colour
+only ever says "more"; it is not the brand gradient and never colours by rank. Colouring a bar by its rank is how a chart starts
 lying. They stand as vertical columns, one per congress day in the order the
 week runs, and a day with nothing booked keeps its slot at zero rather than
 dropping out. Open floor time lives on each day's own page, not on this chart.
