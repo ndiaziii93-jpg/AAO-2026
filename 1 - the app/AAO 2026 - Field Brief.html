@@ -2077,6 +2077,10 @@ const STATUS = {
 /* SNAPSHOT is filled only in the downloaded read-only copy. READONLY is true for
    that copy and for anyone signed in as a viewer: same page, every edit hidden. */
 const SNAPSHOT = null;
+/* A copy of this file can be cut with a backup already inside it, so one
+   download carries the phone's day onto a laptop. It is offered once, on the
+   page, never loaded over what is there without asking. Null in the repo. */
+const PRELOAD = null;
 let READONLY = !!SNAPSHOT;
 const RW = function(html){ return READONLY ? "" : html; };
 
@@ -2761,6 +2765,21 @@ async function saveBackup(){
   DIRTY = false;
   setSync("ok");
 }
+function offerPreload(){
+  if(!PRELOAD || !PRELOAD.data) return;
+  const mark = "aao2026.preload";
+  let seen = null;
+  try{ seen = localStorage.getItem(mark); }catch(e){}
+  if(seen === PRELOAD.saved) return;
+  try{ localStorage.setItem(mark, PRELOAD.saved); }catch(e){}
+  const here = db && db.exportAll ? db.exportAll() : {};
+  const empty = !Object.keys(here).some(function(k){ return Object.keys(here[k] || {}).length; });
+  if(empty){ db.importAll(PRELOAD.data); notice("Loaded the copy carried in this file."); return; }
+  const n = Object.keys(PRELOAD.data.meetings || {}).length;
+  state.pendingBackup = PRELOAD.data;
+  notice("This file carries the latest from your phone, saved " +
+    new Date(PRELOAD.saved).toLocaleString() + " (" + n + " meetings). Replace what is on this laptop with it?");
+}
 function openBackup(){
   const inp = document.createElement("input");
   inp.type = "file"; inp.accept = ".json,application/json";
@@ -2851,7 +2870,7 @@ async function connect(){
     snap.docs.forEach(d => { if(d.exists) next[d.id] = Object.assign({id:d.id}, d.data()); });
     state.meetings = next; render();
   }, () => setSync("local"));
-  try{ await db.start(); }
+  try{ await db.start(); offerPreload(); }
   catch(e){ setSync("error", e && e.message ? e.message : String(e)); }
 }
 async function saveTarget(id, patch){
