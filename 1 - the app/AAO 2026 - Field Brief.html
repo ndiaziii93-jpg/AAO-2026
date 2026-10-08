@@ -1184,7 +1184,7 @@ body.packing #packout{display:block}
     break-after:avoid; page-break-after:avoid}
   .pk-chart{margin:0 0 14pt}
   .pk-cols{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; column-gap:6pt;
-    height:34mm; border-bottom:1px solid #B9C6D3; break-inside:avoid; page-break-inside:avoid}
+    height:27mm; border-bottom:1px solid #B9C6D3; break-inside:avoid; page-break-inside:avoid}
   .pk-col{display:flex; flex-direction:column; justify-content:flex-end; align-items:center;
     position:relative; min-width:0}
   .pk-col-val{font-family:"Archivo",sans-serif; font-size:9.5pt; font-weight:700; color:#0A2337;
@@ -1323,16 +1323,27 @@ body.packing #packout{display:block}
   .pk-tier.t1{background:#C41E23}
   .pk-tier.t2{background:#273C8A}
   .pk-tier.t3{background:#A3B2C0}
-  .pk-tiers{margin:0 0 14pt}
-  .pk-tierrow{display:grid; grid-template-columns:14pt auto 1fr; align-items:baseline;
-    column-gap:8pt; padding:7pt 0; border-bottom:1px solid #DCE3EA;
-    break-inside:avoid; page-break-inside:avoid}
-  .pk-tierrow:last-child{border-bottom:0}
-  .pk-tiern{font-family:"Archivo",sans-serif; font-size:14pt; font-weight:700; color:#0A2337;
-    font-variant-numeric:tabular-nums}
-  .pk-tierb{font-size:8.5pt; color:#54687C; line-height:1.4}
-  .pk-tierb b{display:block; font-family:"Archivo",sans-serif; font-size:9pt; color:#0B2A4A;
-    line-height:1.25}
+  .pk-cov{margin:0 0 14pt}
+  .pk-covhead{display:flex; align-items:flex-end; gap:9pt; margin:0 0 8pt}
+  .pk-covn{font-family:"Archivo",sans-serif; font-size:26pt; font-weight:700; color:#0A2337;
+    line-height:.9; letter-spacing:-.9pt; font-variant-numeric:tabular-nums}
+  .pk-covn i{font-style:normal; font-size:13pt; color:#8195A7; letter-spacing:-.2pt}
+  .pk-covl{font-family:"Archivo",sans-serif; font-size:9.5pt; font-weight:700; color:#0B2A4A; line-height:1.2}
+  .pk-covl b{display:block; font-family:"Public Sans",sans-serif; font-size:8.5pt; font-weight:400; color:#54687C}
+  .pk-units{display:flex; gap:2pt; margin:0 0 7pt}
+  .pk-unit{flex:1; height:12pt; border-radius:2.5pt; min-width:0}
+  .pk-unit.t1{background:#C41E23} .pk-unit.t2{background:#273C8A} .pk-unit.t3{background:#D5DDE5}
+  .pk-tiers{display:block}
+  .pk-tierrow{display:grid; grid-template-columns:22pt 1fr; align-items:baseline; column-gap:8pt;
+    padding:4pt 9pt; margin-bottom:3pt; border:1px solid #E3E9EF; border-left:3pt solid #A3B2C0;
+    border-radius:6pt; background:#fff; break-inside:avoid; page-break-inside:avoid}
+  .pk-tierrow.t1{border-left-color:#C41E23} .pk-tierrow.t2{border-left-color:#273C8A}
+  .pk-tiern{font-family:"Archivo",sans-serif; font-size:15pt; font-weight:700; color:#0A2337;
+    font-variant-numeric:tabular-nums; text-align:right}
+  .pk-tierb{font-size:8.5pt; color:#54687C; line-height:1.3}
+  .pk-tierb b{display:flex; align-items:center; gap:5pt; font-family:"Archivo",sans-serif; font-size:9.5pt;
+    color:#0B2A4A; margin-bottom:1pt}
+  .pk-tierb .pk-tier{width:11pt; height:11pt; font-size:6.5pt}
 
   /* ---------- both sides of the table ---------- */
   /* stacked, not side by side: two 45mm columns turned every name into a
@@ -7682,7 +7693,7 @@ function packHTML(){
       };
       return '<div class="pk-col">' +
         '<b class="pk-col-val">' + n + '</b>' +
-        '<span class="pk-col-bar" style="height:calc((34mm - 16pt) * ' + (ht / 100).toFixed(3) + ');background:' + ramp(n / wkMax) + '"></span>' +
+        '<span class="pk-col-bar" style="height:calc((27mm - 16pt) * ' + (ht / 100).toFixed(3) + ');background:' + ramp(n / wkMax) + '"></span>' +
         '<span class="pk-col-lab">' + esc(d.label || d.short || d.key) + '</span>' +
       '</div>';
     }).join("") +
@@ -7692,13 +7703,23 @@ function packHTML(){
      can decode is worse than no chip */
   const byTier = {1:[], 2:[], 3:[]};
   all.forEach(function(m){ byTier[tierOf(m)].push(m); });
-  h += '<p class="pk-ch-title">How the week divides</p><div class="pk-tiers">' +
-    [1,2,3].map(function(t){
-      return '<div class="pk-tierrow"><span class="pk-tier t' + t + '">' + t + '</span>' +
+  /* Coverage first, as a figure: of the week's meetings, how many have someone
+     from Ora on them. Then one block per meeting, in tier order, so the
+     uncovered share is something you see rather than add up; then the key. */
+  const covered = byTier[1].length + byTier[2].length;
+  const covPct = all.length ? Math.round(covered / all.length * 100) : 0;
+  h += '<p class="pk-ch-title">How the week divides</p><div class="pk-cov">' +
+    '<div class="pk-covhead"><span class="pk-covn">' + covered + '<i> of ' + all.length + '</i></span>' +
+      '<span class="pk-covl">meetings covered<b>' + covPct + '% have someone from Ora on them</b></span></div>' +
+    '<div class="pk-units" aria-hidden="true">' + [1,2,3].map(function(t){
+        return byTier[t].map(function(){ return '<span class="pk-unit t' + t + '"></span>'; }).join("");
+      }).join("") + '</div>' +
+    '<div class="pk-tiers">' + [1,2,3].map(function(t){
+      return '<div class="pk-tierrow t' + t + '">' +
         '<span class="pk-tiern">' + byTier[t].length + '</span>' +
-        '<span class="pk-tierb"><b>' + esc(TIERS[t].what) + '</b>' +
+        '<span class="pk-tierb"><b><span class="pk-tier t' + t + '">' + t + '</span>' + esc(TIERS[t].what) + '</b>' +
         esc(TIERS[t].why) + '</span></div>';
-    }).join("") + '</div>';
+    }).join("") + '</div></div>';
 
   /* the exec page ends here. What still needs doing and the contents start
      a page of their own, so neither is cut in half by the page edge. */
