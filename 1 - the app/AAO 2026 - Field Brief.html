@@ -571,6 +571,10 @@ main{padding:26px 0 80px}
 .bdv-l{font-family:"Archivo"; font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
   color:var(--navy-ink-2); padding-top:3px}
 .bdv-row p{margin:0; font-size:14px; line-height:1.55; max-width:62ch; color:var(--navy-ink)}
+.bdv-ob{border-top:1px solid var(--navy-line); padding-top:9px}
+.bdv-ob .bdv-l{display:block; margin-bottom:5px; padding-top:0}
+.bdv-ob p{margin:0 0 8px; font-size:14px; line-height:1.55; max-width:62ch; color:var(--navy-ink)}
+.bdv-ob p:last-child{margin-bottom:0}
 .bdv .bdv-gap{color:var(--navy-ink-2); font-style:italic; font-size:13px; margin:0}
 @media (max-width:420px){ .bdv-row{grid-template-columns:1fr; gap:3px} }
 .mbody{border-top:1px solid var(--line); padding:14px 15px 16px; display:grid; gap:14px; background:var(--surface-2); min-width:0}
@@ -6213,10 +6217,11 @@ function meetingCard(m, inTimeline){
   blocks.push('<div class="bdv">' +
     '<p class="bdv-k">Why we\u2019re in the room</p>' +
     (has(m.topic) ? '<p class="bdv-t">' + esc(m.topic) + '</p>' : '<p class="bdv-gap">Topic not set</p>') +
-    '<div class="bdv-row"><span class="bdv-l">Objective</span>' +
-      (has(m.objective) ? '<p>' + esc(m.objective) + '</p>' : '<p class="bdv-gap">Not set yet. What has to be true when we walk out?</p>') + '</div>' +
-    '<div class="bdv-row"><span class="bdv-l">Background</span>' +
-      (has(m.background) ? '<p>' + esc(m.background) + '</p>' : '<p class="bdv-gap">Not captured yet</p>') + '</div>' +
+    /* one section, as written: the author's objective and background read
+       as a single piece, so they print together under one heading */
+    '<div class="bdv-ob"><span class="bdv-l">Objective and background</span>' +
+      ([m.objective, m.background].filter(has).map(function(x){ return '<p>' + esc(x) + '</p>'; }).join("") ||
+        '<p class="bdv-gap">Not written yet. What has to be true when we walk out, and why now?</p>') + '</div>' +
   '</div>');
   const cbr = has(m.company) ? BRIEF_BY_ID[slug(m.company)] : null;
   if(cbr){
